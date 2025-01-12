@@ -1,9 +1,14 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:companion/src/features/companies/pods/companies_pod.dart';
 import 'package:flutter/material.dart';
+
+import 'package:auto_route/auto_route.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:velocity_x/velocity_x.dart';
+
+import 'package:companion/src/features/companies/pods/company_pod.dart';
+import 'package:companion/src/utils/input_decoration.dart';
 
 @RoutePage()
 class NewCompanyPage extends ConsumerStatefulWidget {
@@ -14,35 +19,25 @@ class NewCompanyPage extends ConsumerStatefulWidget {
 }
 
 class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
-  late final TextEditingController _nameController;
-  late final TextEditingController _descriptionController;
-  late final GlobalKey<FormState> _formKey;
+  late final GlobalKey<FormBuilderState> _formKey;
   bool isSubmitDisabled = true;
 
   @override
   void initState() {
     super.initState();
-    _nameController = TextEditingController();
-    _descriptionController = TextEditingController();
-    _formKey = GlobalKey<FormState>();
+    _formKey = GlobalKey<FormBuilderState>();
   }
 
   Future<bool> createNewCompany() async {
-    // if (!_formKey.currentState!.validate()) {
-    //   return false;
-    // }
-    await ref.read(companiesPodProvider.notifier).insertCompany(
-          name: _nameController.text,
-          description: _descriptionController.text,
+    _formKey.currentState!.saveAndValidate();
+
+    final values = _formKey.currentState!.value;
+
+    await ref.read(companyPodProvider.notifier).create(
+          name: values['name'],
+          description: values["description"],
         );
     return true;
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _descriptionController.dispose();
-    super.dispose();
   }
 
   @override
@@ -77,11 +72,10 @@ class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
     return VStack(
       [
         12.h.heightBox,
-        Form(
-          key: _formKey,
+        FormBuilder(
           autovalidateMode: AutovalidateMode.onUserInteraction,
           onChanged: () {
-            if (_formKey.currentState!.validate()) {
+            if (_formKey.currentState!.isValid) {
               setState(() {
                 isSubmitDisabled = false;
               });
@@ -91,54 +85,31 @@ class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
               });
             }
           },
+          key: _formKey,
           child: VStack(
             [
-              TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 8.h,
-                    horizontal: 12.w,
-                  ),
-                  hintText: "Name",
-                ),
-                textInputAction: TextInputAction.next,
-                controller: _nameController,
-                validator: (str) {
-                  if (str!.isEmpty || str.length < 2) {
-                    return "Name should not be empty";
-                  }
-
-                  return null;
-                },
+              FormBuilderTextField(
+                name: "name",
+                decoration: getDecoration(hint: 'Name'),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.minLength(2),
+                  FormBuilderValidators.maxLength(30),
+                ]),
               ),
-              16.heightBox,
-              TextFormField(
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    vertical: 8.h,
-                    horizontal: 12.w,
-                  ),
-                  hintText: "Description",
-                ),
+              12.h.heightBox,
+              FormBuilderTextField(
+                name: "description",
+                decoration: getDecoration(hint: "Description"),
                 maxLines: 5,
-                controller: _descriptionController,
-                validator: (str) {
-                  if (str!.isEmpty || str.length < 2) {
-                    return "Description should not be empty";
-                  }
-
-                  return null;
-                },
-              ),
+                validator: FormBuilderValidators.compose([
+                  FormBuilderValidators.required(),
+                  FormBuilderValidators.minLength(2)
+                ]),
+              )
             ],
-          ),
-        ).pSymmetric(h: 16.w),
+          ).pSymmetric(h: 16.w),
+        ),
       ],
     );
   }

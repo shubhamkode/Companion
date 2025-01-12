@@ -1,45 +1,36 @@
-import 'package:companion/src/features/companies/models/company.dart';
-import 'package:companion/src/features/companies/pods/companies_pod.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:multi_dropdown/multi_dropdown.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class CompanySelector extends ConsumerWidget {
-  final MultiSelectController<Company> controller;
-  const CompanySelector({
+class FormBuilderMultiSelector<T extends Object> extends StatelessWidget {
+  final String? name;
+  final List<DropdownItem<T>> items;
+  final DropdownItemBuilder<T>? itemBuilder;
+  final MultiSelectController<T>? controller;
+
+  const FormBuilderMultiSelector({
     super.key,
-    required this.controller,
+    this.name,
+    required this.items,
+    this.itemBuilder,
+    this.controller,
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final companiesProvider = ref.watch(companiesPodProvider);
-
-    return companiesProvider.maybeWhen(
-      orElse: () => const CircularProgressIndicator(),
-      data: (companies) {
-        final List<DropdownItem<Company>> items = companies.builder(
-          (cmp) => DropdownItem(
-            label: cmp.name,
-            value: cmp,
-          ),
-        );
-
-        return MultiDropdown<Company>(
-          controller: controller,
-          items: items,
-          validator: (selectedOptions) {
-            if (selectedOptions!.isEmpty) {
-              return "Atleast one company should be selected";
-            }
-            return null;
-          },
+  Widget build(BuildContext context) {
+    return FormBuilderField(
+      name: name ?? "name",
+      builder: (FormFieldState<T> field) {
+        return MultiDropdown<T>(
+          
           fieldDecoration: FieldDecoration(
+            backgroundColor: context.colors.surfaceContainer,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(4.r),
+              borderRadius: BorderRadius.circular(8.r),
             ),
+            padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
           ),
           dropdownDecoration: DropdownDecoration(
             backgroundColor: context.colors.surfaceContainer,
@@ -47,32 +38,29 @@ class CompanySelector extends ConsumerWidget {
             marginTop: 4.h,
             borderRadius: BorderRadius.circular(8.r),
           ),
-          itemBuilder: (item, index, onTap) {
-            final company = item.value;
-
-            return CheckboxListTile(
-              title: company.name.text.make(),
-              value: controller.selectedItems.contains(item),
-              onChanged: (val) {
-                onTap();
-              },
-            );
-          },
+          itemBuilder: itemBuilder,
+          items: items,
+          controller: controller,
+          //INFO:- Removed Valdator as a CONTACT may or may not have a company.
+          // validator: (val) {
+          //   if (controller?.selectedItems.isEmpty == true) {
+          //     return "Please select at least one item";
+          //   }
+          //   return null;
+          // },
+          chipDecoration: ChipDecoration(
+            deleteIcon: Icon(
+              Icons.close,
+              size: 15,
+              color: context.colors.onSecondary,
+            ),
+            backgroundColor: context.colors.secondary,
+            labelStyle: context.textTheme.bodyMedium?.copyWith(
+              color: context.colors.onSecondary,
+            ),
+          ),
         );
       },
     );
   }
 }
-
-
-            // footer: OutlinedButton(
-            //   style: OutlinedButton.styleFrom(
-            //     shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.circular(4.r),
-            //     ),
-            //   ),
-            //   onPressed: () {
-            //     context.pushRoute(NewCompanyRoute());
-            //   },
-            //   child: "New Company".text.make(),
-            // ).pSymmetric(h: 8.w, v: 4.h),

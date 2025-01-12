@@ -1,220 +1,314 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:companion/src/features/companies/models/company.dart';
+import 'package:companion/src/core/routes/router.dart';
+import 'package:companion/src/core/widgets/action_icon_button.dart';
+import 'package:companion/src/features/companies/models/company_model.dart';
+import 'package:companion/src/features/companies/repositories/company_repository.dart';
+import 'package:companion/src/features/companies_to_contact/repositories/company_to_contact_repository.dart';
 import 'package:companion/src/features/contacts/models/contact_model.dart';
+import 'package:companion/src/features/contacts/pages/contacts/new/sections/companies_select_section.dart';
 import 'package:companion/src/features/contacts/pods/contact_pod.dart';
-import 'package:companion/utils.dart';
-import 'package:disclosure/disclosure.dart';
+import 'package:companion/src/features/contacts/repositories/contact_repository.dart';
+import 'package:companion/src/features/contacts/widgets/companies_disclosure.dart';
+import 'package:companion/src/features/pims/models/pim_model.dart';
+import 'package:companion/src/features/pims/repositories/pim_repository.dart';
+import 'package:companion/src/utils/color_ext.dart';
+import 'package:companion/src/utils/helpers.dart';
+import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-// Future<Contact?> getCompanyById(final String id) async {
-//   return Hive.box<i
-//     id,
-//     defaultValue: null,
-//   );
-// }
-
 @RoutePage()
-class ContactDetailsPage extends ConsumerStatefulWidget {
-  final Contact contact;
+class ContactDetailsPage extends ConsumerWidget {
+  final String contactId;
   const ContactDetailsPage({
     super.key,
-    required this.contact,
+    required this.contactId,
   });
 
-  @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _ContactDetailsPageState();
-}
-
-class _ContactDetailsPageState extends ConsumerState<ContactDetailsPage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(),
-      body: _buildBody(),
-    );
-  }
-
-  _buildAppBar() {
-    return AppBar(
-      title: "View Contact".text.make(),
-    );
-  }
-
-  _buildBody() {
-    return SingleChildScrollView(
-      child: VStack(
-        [
-          30.h.heightBox,
-          Hero(
-            tag: 'Contact-${widget.contact.id}',
-            child: CircleAvatar(
-              radius: 80,
-              backgroundColor: Color(widget.contact.color),
-              child: widget.contact.name[0].text.displayLarge(context).make(),
-            ),
-          ),
-          24.h.heightBox,
-          widget.contact.name.text.headlineMedium(context).make(),
-          1.h.heightBox,
-          16.h.heightBox,
-          HStack(
-            [
-              Column(
-                children: [
-                  IconButton.filledTonal(
-                    onPressed: () async {
-                      context.back();
-
-                      await ref
-                          .read(contactPodProvider.notifier)
-                          .deleteContact(widget.contact);
-                    },
-                    icon: Icon(
-                      Icons.delete_outline_rounded,
-                    ).p(8),
-                  ),
-                  4.h.heightBox,
-                  "Delete".text.titleSmall(context).medium.make(),
-                ],
-              ),
-              48.w.widthBox,
-              Column(
-                children: [
-                  IconButton.filledTonal(
-                    onPressed: () {},
-                    icon: Icon(
-                      Icons.edit_note_rounded,
-                    ).p(8),
-                  ),
-                  4.h.heightBox,
-                  "Edit".text.titleSmall(context).medium.make(),
-                ],
-              ),
-              48.w.widthBox,
-              Column(
-                children: [
-                  IconButton.filledTonal(
-                    onPressed: () async {
-                      await makePhoneCall(widget.contact.pims[0].contact);
-                    },
-                    icon: Icon(
-                      Icons.call_outlined,
-                    ).p(8),
-                  ),
-                  4.h.heightBox,
-                  "Call".text.titleSmall(context).medium.make(),
-                ],
-              ),
-            ],
-            axisSize: MainAxisSize.max,
-            alignment: MainAxisAlignment.center,
-            crossAlignment: CrossAxisAlignment.center,
-          ),
-          24.h.heightBox,
-          Card(
-            elevation: 0,
-            child: VStack(
-              [
-                "Contact Info".text.labelLarge(context).make(),
-                8.h.heightBox,
-                ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: widget.contact.pims.length,
-                  itemBuilder: (context, index) {
-                    final pim = widget.contact.pims[index];
-                    return ListTile(
-                      // leading:
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4.r),
-                      ),
-                      title: pim.contact
-                          .formatDigitPattern(digit: 5, pattern: " ")
-                          .text
-                          .medium
-                          .make(),
-                      subtitle: (index == 0 ? "Primary" : "Others")
-                          .text
-                          .bodyMedium(context)
-                          .color(context.colors.onSurface.withAlpha(150))
-                          .make(),
-                      leading: Icon(Icons.call_outlined),
-                      onTap: () async {
-                        await makePhoneCall(pim.contact);
-                      },
-                      splashColor: Colors.transparent,
-                      focusColor: Colors.transparent,
-                    );
-                  },
-                ),
-              ],
-            ).pSymmetric(v: 16.h, h: 12.w),
-          ).wFull(context).pSymmetric(h: 18.w),
-          20.h.heightBox,
-          Card(
-            elevation: 0,
-            child: VStack([
-              "Companies Info".text.labelLarge(context).make(),
-              8.h.heightBox,
-              CompaniesDisclosure(
-                companies: widget.contact.companies,
-              ),
-            ]).pSymmetric(v: 16.h, h: 12.w),
-          ).wFull(context).pSymmetric(h: 18.w),
-          12.h.heightBox,
-        ],
-        crossAlignment: CrossAxisAlignment.center,
-      ).wFull(context),
-    );
-  }
-}
-
-class CompaniesDisclosure extends HookConsumerWidget {
-  final List<Company> companies;
-  const CompaniesDisclosure({
-    super.key,
-    required this.companies,
-  });
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Disclosure(
-      wrapper: (state, child) {
-        return Card.outlined(
-          // clipBehavior: Clip.antiAlias,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(4.r),
-          ),
-          // borderRadius: BorderRadius.circular(10),
-          child: child,
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: RefreshIndicator(
+        onRefresh: () async {
+          ref.invalidate(contactDetailsProvider);
+        },
+        child: _buildBody(context),
+      ),
+    );
+  }
+
+  _buildAppBar(BuildContext context) {
+    return AppBar();
+  }
+
+  _buildBody(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final contactDetailPod = ref.watch(contactDetailsProvider(contactId));
+        return contactDetailPod.when(
+            loading: () => const Center(
+                  child: CircularProgressIndicator(),
+                ),
+            error: (err, stack) => err.toString().text.makeCentered(),
+            data: (details) {
+              return SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: VStack(
+                  [
+                    _buildDescription(context, contact: details.contact),
+                    _buildActions(context, details: details),
+                    _buildPimsInfo(context, pims: details.contactPims),
+                    _buildCompanies(context,
+                        relatedCompanies: details.relatedCompanies),
+                  ],
+                  spacing: 30.h,
+                ).pOnly(left: 24.w, right: 24.w, top: 15.h),
+              );
+            });
+      },
+    );
+  }
+
+  _buildDescription(
+    BuildContext context, {
+    required ContactModel contact,
+  }) {
+    return VStack(
+      [
+        VxBox(
+          child: contact.name[0].text
+              .displayLarge(context)
+              .color(Vx.white)
+              .makeCentered(),
+        )
+            .make()
+            .circle(
+              radius: 160,
+              backgroundColor: contact.hexColor.colorFromHex(),
+            )
+            .hero('Contact-${contact.id}'),
+        24.h.heightBox,
+        contact.name.text.headlineMedium(context).start.make(),
+        4.h.heightBox,
+        contact.distributor.text.bodyLarge(context).make(),
+      ],
+    );
+  }
+
+  _buildActions(
+    BuildContext context, {
+    required ContactDetailModel details,
+  }) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return HStack(
+          [
+            ActionIconButton(
+              onPressed: () async {
+                if (await confirm(
+                  context,
+                  canPop: true,
+                  textOK: Text('Sure'),
+                  textCancel: Text("Cancel"),
+                  content: Text("Contact will be deleted Forever"),
+                  title: Text("Delete Contact").wFull(context),
+                )) {
+                  await ref
+                      .read(contactPodProvider.notifier)
+                      .deleteContact(details.contact);
+                  if (context.mounted) {
+                    context.maybePop();
+                  }
+                }
+              },
+              icon: Icons.delete_outline_rounded,
+              actionText: "Delete",
+            ),
+            ActionIconButton(
+              onPressed: () async {
+                final relations = (await ref
+                        .read(companyToContactRepositoryProvider)
+                        .readAll())
+                    .filter((rel) => rel.contactId == contactId)
+                    .toList();
+
+                ref
+                    .read(multiSelectCompanyNotifier.notifier)
+                    .setSelectedCompanies(
+                      relations.builder((rel) => rel.companyId),
+                    );
+
+                if (context.mounted) {
+                  await context
+                      .pushRoute<bool>(
+                    EditContactRoute(
+                      contact: details.contact,
+                      contactPims: details.contactPims,
+                      relations: relations,
+                    ),
+                  )
+                      .then(
+                    (val) {
+                      if (val == true) {
+                        ref.invalidate(contactDetailsProvider);
+                      }
+                    },
+                  );
+                }
+              },
+              icon: Icons.edit_note_outlined,
+              actionText: "Edit",
+            ),
+            ActionIconButton(
+              onPressed: () async {
+                final PimModel primaryPim = details.contactPims[0];
+                await makePhoneCall(primaryPim.digits);
+              },
+              icon: Icons.call_outlined,
+              actionText: "Call",
+            ),
+          ],
+          spacing: 40.w,
+          crossAlignment: CrossAxisAlignment.center,
         );
       },
-      header: const DisclosureButton(
-        child: ListTile(
-          title: Text('Dealing Companies'),
-          trailing: DisclosureIcon(),
-        ),
-      ),
-      child: DisclosureView(
-        padding: EdgeInsets.all(15.0),
-        child: ListView.builder(
+    );
+  }
+
+  _buildPimsInfo(
+    BuildContext context, {
+    required List<PimModel> pims,
+  }) {
+    if (pims.isEmpty) {
+      return "No PIMs".text.bodyLarge(context).slate400.make();
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        "Contacts".text.make().pOnly(left: 4.w),
+        8.h.heightBox,
+        ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
-          itemCount: companies.length,
+          itemCount: pims.length,
+          reverse: true,
           itemBuilder: (context, index) {
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Color(companies[index].color),
-                child: companies[index].name[0].text.titleLarge(context).make(),
-              ),
-              title: companies[index].name.text.make(),
+            return PimTile(
+              pim: pims[index],
+              isPrimary: index == pims.length - 1,
             );
           },
         ),
-      ),
+      ],
+    );
+  }
+
+  _buildCompanies(
+    BuildContext context, {
+    required List<CompanyModel> relatedCompanies,
+  }) {
+    return Consumer(
+      builder: (context, ref, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            relatedCompanies.isEmpty
+                ? 'No Companies'
+                    .text
+                    .bodyLarge(context)
+                    .slate400
+                    .makeCentered()
+                    .pOnly(top: 24.h)
+                : CompaniesDisclosure(
+                    companies: relatedCompanies,
+                  )
+          ],
+        );
+      },
     );
   }
 }
+
+class PimTile extends StatelessWidget {
+  final PimModel pim;
+  final bool isPrimary;
+  const PimTile({
+    super.key,
+    required this.pim,
+    required this.isPrimary,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(4.r),
+      ),
+      title: pim.digits
+          .formatDigitPattern(digit: 5, pattern: " ")
+          .text
+          .medium
+          .make(),
+      subtitle: (isPrimary ? "Primary" : "Others")
+          .text
+          .bodyMedium(context)
+          .color(context.colors.onSurface.withAlpha(150))
+          .make(),
+      leading: Icon(Icons.call_outlined),
+      onTap: () async {
+        await makePhoneCall(pim.digits);
+      },
+      splashColor: Colors.transparent,
+      focusColor: Colors.transparent,
+    );
+  }
+}
+
+class ContactDetailModel {
+  final ContactModel contact;
+  final List<PimModel> contactPims;
+  final List<CompanyModel> relatedCompanies;
+
+  ContactDetailModel({
+    required this.contact,
+    required this.contactPims,
+    required this.relatedCompanies,
+  });
+}
+
+final contactDetailsProvider =
+    FutureProvider.family<ContactDetailModel, String>(
+  (ref, contactId) async {
+    final repo = ref.read(contactRepositoryProvider);
+    final contact = (await repo.read(contactId))!;
+
+    final pims =
+        (await ref.read(pimRepositoryProvider).readAll()).sortedBy((a, b) {
+      return -DateTime.parse(b.created).compareTo(DateTime.parse(a.created));
+    });
+    final contactPims =
+        pims.filter((pim) => pim.contactId == contact.id).toList();
+
+    final relations =
+        await (ref.read(companyToContactRepositoryProvider)).readAll();
+
+    final companyRelationIds = relations
+        .filter((rel) => rel.contactId == contact.id)
+        .toList()
+        .builder((a) => a.companyId);
+
+    final companies = await (ref.read(companyRepositoryProvider)).readAll();
+
+    final relatedCompanies =
+        companies.filter((cmp) => companyRelationIds.contains(cmp.id)).toList();
+
+    return ContactDetailModel(
+      contact: contact,
+      contactPims: contactPims,
+      relatedCompanies: relatedCompanies,
+    );
+  },
+);

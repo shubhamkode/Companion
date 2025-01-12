@@ -1,24 +1,26 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/routes/router.dart';
+import 'package:companion/src/features/settings/pods/settings_pod.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return AutoTabsRouter.pageView(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return AutoTabsRouter(
       routes: [
         ContactsRoute(),
         CompaniesRoute(),
       ],
-      builder: (context, child, _) {
+      builder: (context, child) {
         final tabsRouter = AutoTabsRouter.of(context);
-
         return Scaffold(
           appBar: _buildAppBar(context),
           body: child,
@@ -32,6 +34,8 @@ class HomePage extends StatelessWidget {
   _buildAppBar(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: false,
+      scrolledUnderElevation: 0,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       titleSpacing: 0,
       leadingWidth: 0,
       title: HStack(
@@ -45,13 +49,28 @@ class HomePage extends StatelessWidget {
               size: 20.w,
             ),
           ).pOnly(left: 12.w).onTap(() {
-            context.pushRoute(ProfileRoute());
+            context.pushRoute(SettingsRoute());
           }),
           8.w.widthBox,
           "Companion".text.make(),
         ],
         crossAlignment: CrossAxisAlignment.center,
       ),
+      actions: kDebugMode
+          ? [
+              Consumer(
+                builder: (context, ref, child) {
+                  return IconButton(
+                    icon: Icon(Icons.refresh_outlined),
+                    onPressed: () async {
+                      await ref.read(settingsPodProvider.notifier).refresh();
+                    },
+                  );
+                },
+              ),
+              8.w.widthBox,
+            ]
+          : null,
     );
   }
 

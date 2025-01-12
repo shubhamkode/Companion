@@ -33,13 +33,13 @@ class CompaniesRoute extends PageRouteInfo<void> {
 class CompanyDetailsRoute extends PageRouteInfo<CompanyDetailsRouteArgs> {
   CompanyDetailsRoute({
     Key? key,
-    required Company company,
+    required String companyId,
     List<PageRouteInfo>? children,
   }) : super(
           CompanyDetailsRoute.name,
           args: CompanyDetailsRouteArgs(
             key: key,
-            company: company,
+            companyId: companyId,
           ),
           initialChildren: children,
         );
@@ -52,7 +52,7 @@ class CompanyDetailsRoute extends PageRouteInfo<CompanyDetailsRouteArgs> {
       final args = data.argsAs<CompanyDetailsRouteArgs>();
       return CompanyDetailsPage(
         key: args.key,
-        company: args.company,
+        companyId: args.companyId,
       );
     },
   );
@@ -61,16 +61,16 @@ class CompanyDetailsRoute extends PageRouteInfo<CompanyDetailsRouteArgs> {
 class CompanyDetailsRouteArgs {
   const CompanyDetailsRouteArgs({
     this.key,
-    required this.company,
+    required this.companyId,
   });
 
   final Key? key;
 
-  final Company company;
+  final String companyId;
 
   @override
   String toString() {
-    return 'CompanyDetailsRouteArgs{key: $key, company: $company}';
+    return 'CompanyDetailsRouteArgs{key: $key, companyId: $companyId}';
   }
 }
 
@@ -79,13 +79,13 @@ class CompanyDetailsRouteArgs {
 class ContactDetailsRoute extends PageRouteInfo<ContactDetailsRouteArgs> {
   ContactDetailsRoute({
     Key? key,
-    required Contact contact,
+    required String contactId,
     List<PageRouteInfo>? children,
   }) : super(
           ContactDetailsRoute.name,
           args: ContactDetailsRouteArgs(
             key: key,
-            contact: contact,
+            contactId: contactId,
           ),
           initialChildren: children,
         );
@@ -98,7 +98,7 @@ class ContactDetailsRoute extends PageRouteInfo<ContactDetailsRouteArgs> {
       final args = data.argsAs<ContactDetailsRouteArgs>();
       return ContactDetailsPage(
         key: args.key,
-        contact: args.contact,
+        contactId: args.contactId,
       );
     },
   );
@@ -107,16 +107,16 @@ class ContactDetailsRoute extends PageRouteInfo<ContactDetailsRouteArgs> {
 class ContactDetailsRouteArgs {
   const ContactDetailsRouteArgs({
     this.key,
-    required this.contact,
+    required this.contactId,
   });
 
   final Key? key;
 
-  final Contact contact;
+  final String contactId;
 
   @override
   String toString() {
-    return 'ContactDetailsRouteArgs{key: $key, contact: $contact}';
+    return 'ContactDetailsRouteArgs{key: $key, contactId: $contactId}';
   }
 }
 
@@ -137,6 +137,110 @@ class ContactsRoute extends PageRouteInfo<void> {
       return const ContactsPage();
     },
   );
+}
+
+/// generated route for
+/// [EditCompanyPage]
+class EditCompanyRoute extends PageRouteInfo<EditCompanyRouteArgs> {
+  EditCompanyRoute({
+    Key? key,
+    required CompanyModel company,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditCompanyRoute.name,
+          args: EditCompanyRouteArgs(
+            key: key,
+            company: company,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditCompanyRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<EditCompanyRouteArgs>();
+      return EditCompanyPage(
+        key: args.key,
+        company: args.company,
+      );
+    },
+  );
+}
+
+class EditCompanyRouteArgs {
+  const EditCompanyRouteArgs({
+    this.key,
+    required this.company,
+  });
+
+  final Key? key;
+
+  final CompanyModel company;
+
+  @override
+  String toString() {
+    return 'EditCompanyRouteArgs{key: $key, company: $company}';
+  }
+}
+
+/// generated route for
+/// [EditContactPage]
+class EditContactRoute extends PageRouteInfo<EditContactRouteArgs> {
+  EditContactRoute({
+    Key? key,
+    required ContactModel contact,
+    required List<PimModel> contactPims,
+    required List<CompanyToContactModel> relations,
+    List<PageRouteInfo>? children,
+  }) : super(
+          EditContactRoute.name,
+          args: EditContactRouteArgs(
+            key: key,
+            contact: contact,
+            contactPims: contactPims,
+            relations: relations,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'EditContactRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<EditContactRouteArgs>();
+      return EditContactPage(
+        key: args.key,
+        contact: args.contact,
+        contactPims: args.contactPims,
+        relations: args.relations,
+      );
+    },
+  );
+}
+
+class EditContactRouteArgs {
+  const EditContactRouteArgs({
+    this.key,
+    required this.contact,
+    required this.contactPims,
+    required this.relations,
+  });
+
+  final Key? key;
+
+  final ContactModel contact;
+
+  final List<PimModel> contactPims;
+
+  final List<CompanyToContactModel> relations;
+
+  @override
+  String toString() {
+    return 'EditContactRouteArgs{key: $key, contact: $contact, contactPims: $contactPims, relations: $relations}';
+  }
 }
 
 /// generated route for
@@ -197,20 +301,20 @@ class NewContactRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
-/// [ProfilePage]
-class ProfileRoute extends PageRouteInfo<void> {
-  const ProfileRoute({List<PageRouteInfo>? children})
+/// [SettingsPage]
+class SettingsRoute extends PageRouteInfo<void> {
+  const SettingsRoute({List<PageRouteInfo>? children})
       : super(
-          ProfileRoute.name,
+          SettingsRoute.name,
           initialChildren: children,
         );
 
-  static const String name = 'ProfileRoute';
+  static const String name = 'SettingsRoute';
 
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      return const ProfilePage();
+      return const SettingsPage();
     },
   );
 }
