@@ -18,7 +18,6 @@ dependencies:
   flutter_screenutil: ^5.9.3
   cuid2: ^3.1.0
   url_launcher: ^6.3.1
-  multi_dropdown: ^3.0.1
   disclosure: ^2.2.0
   file_picker: ^8.1.7
   permission_handler: ^11.3.1

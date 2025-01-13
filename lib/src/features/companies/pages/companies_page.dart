@@ -42,7 +42,6 @@ class _CompaniesPageState extends ConsumerState<CompaniesPage> {
       data: (companies) {
         return VStack(
           [
-            12.h.heightBox,
             SearchField(
               hintText: "Search Companies",
               hintEmpty: "No Companies Found",
@@ -88,7 +87,6 @@ class _CompaniesPageState extends ConsumerState<CompaniesPage> {
                     );
               },
             ),
-            8.h.heightBox,
             CompaniesList(
               onRefresh: () async {
                 ref.invalidate(companyPodProvider);
@@ -97,10 +95,10 @@ class _CompaniesPageState extends ConsumerState<CompaniesPage> {
             )
                 .pSymmetric(
                   h: 16.w,
-                  v: 4.h,
                 )
                 .expand(),
           ],
+          spacing: 8.h,
         );
       },
     );

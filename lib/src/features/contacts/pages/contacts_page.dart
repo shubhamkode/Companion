@@ -42,7 +42,6 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
       data: (contacts) {
         return VStack(
           [
-            8.h.heightBox,
             SearchField<ContactModel>(
               hintEmpty: "No Contacts Found",
               hintText: "Search Contacts",
@@ -69,7 +68,6 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
                 );
               },
             ),
-            8.h.heightBox,
             ContactsList(
               contacts: contacts,
               onRefresh: () async {
@@ -77,6 +75,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
               },
             ).expand(),
           ],
+          spacing: 8.h,
         );
       },
     );

@@ -15,12 +15,15 @@ class ContactsList extends StatelessWidget {
       return "No Contacts Found..."
           .text
           .bodyLarge(context)
-          .slate400
+          .color(
+            context.colors.onSurface.withAlpha(200),
+          )
           .makeCentered();
     }
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: ListView.builder(
+        padding: EdgeInsets.zero,
         itemCount: contacts.length,
         itemBuilder: (context, index) {
           return ContactTile(

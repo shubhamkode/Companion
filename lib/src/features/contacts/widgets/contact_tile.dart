@@ -47,8 +47,12 @@ class ContactTile extends ConsumerWidget {
           }),
         ),
       ),
-      contentPadding:
-          contentPadding ?? EdgeInsets.only(left: 24.w, right: 20.w, top: 8.h),
+      contentPadding: contentPadding ??
+          EdgeInsets.only(
+            left: 24.w,
+            right: 20.w,
+            top: 10.h,
+          ),
       title: Wrap(
         direction: Axis.vertical,
         spacing: -2,
@@ -60,7 +64,7 @@ class ContactTile extends ConsumerWidget {
           }),
           contact.distributor.text
               .labelLarge(context)
-              .color(Vx.stone600)
+              .color(context.colors.inverseSurface.withAlpha(220))
               .make()
               .pOnly(left: 1.w),
         ],

@@ -8,11 +8,13 @@ import 'package:velocity_x/velocity_x.dart';
 class BasicDetailsSection extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController distributorController;
+  final bool? autoFocus;
 
   const BasicDetailsSection({
     super.key,
     required this.nameController,
     required this.distributorController,
+    this.autoFocus,
   });
 
   @override
@@ -24,6 +26,8 @@ class BasicDetailsSection extends StatelessWidget {
           decoration: getDecoration(hint: "Name"),
           controller: nameController,
           autovalidateMode: AutovalidateMode.onUserInteraction,
+          textCapitalization: TextCapitalization.words,
+          autofocus: autoFocus == true,
           validator: FormBuilderValidators.compose(
             [
               FormBuilderValidators.required(),
@@ -35,13 +39,7 @@ class BasicDetailsSection extends StatelessWidget {
           name: "distributor",
           decoration: getDecoration(hint: "Distributor"),
           controller: distributorController,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
-          validator: FormBuilderValidators.compose(
-            [
-              FormBuilderValidators.required(),
-              FormBuilderValidators.minLength(2),
-            ],
-          ),
+          textCapitalization: TextCapitalization.words,
         ),
       ],
       spacing: 8.h,

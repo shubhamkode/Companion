@@ -212,8 +212,10 @@ class _EditContactPageState extends ConsumerState<EditContactPage> {
         (await collection.openBox<ContactModel>('contacts')).put(
             widget.contact.id,
             widget.contact.copyWith(
-              name: _nameController.text,
-              distributor: _distributorController.text,
+              name: _nameController.text.trim(),
+              distributor: _distributorController.text.trim().isEmpty
+                  ? "None"
+                  : _distributorController.text.trim(),
             ));
 
         final pimBox = await collection.openBox<PimModel>('pims');

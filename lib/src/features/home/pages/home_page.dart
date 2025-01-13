@@ -14,18 +14,19 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return AutoTabsRouter(
+    return AutoTabsRouter.pageView(
       routes: [
         ContactsRoute(),
         CompaniesRoute(),
       ],
-      builder: (context, child) {
+      builder: (context, child, _) {
         final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(
           appBar: _buildAppBar(context),
           body: child,
           floatingActionButton: _buildFAB(context, tabsRouter),
           bottomNavigationBar: _buildBottomNavBar(context, tabsRouter),
+          // drawer: Drawer(),
         );
       },
     );
@@ -36,29 +37,21 @@ class HomePage extends ConsumerWidget {
       automaticallyImplyLeading: false,
       scrolledUnderElevation: 0,
       backgroundColor: Theme.of(context).colorScheme.surface,
-      titleSpacing: 0,
-      leadingWidth: 0,
-      title: HStack(
-        [
-          CircleAvatar(
-            backgroundColor: context.colors.surfaceContainer,
-            radius: 24,
-            child: Icon(
-              Icons.person_2_outlined,
-              color: context.colors.onSurface.withAlpha(200),
-              size: 20.w,
-            ),
-          ).pOnly(left: 12.w).onTap(() {
-            context.pushRoute(SettingsRoute());
-          }),
-          8.w.widthBox,
-          "Companion".text.make(),
-        ],
-        crossAlignment: CrossAxisAlignment.center,
-      ),
-      actions: kDebugMode
-          ? [
-              Consumer(
+      titleSpacing: 16.w,
+
+      // leading: DrawerButton(
+      //   onPressed: () {
+      //     context.showToast(
+      //       msg: "Feature Not Implemented Yet",
+      //       bgColor: context.colors.errorContainer,
+      //       textColor: context.colors.onErrorContainer,
+      //     );
+      //   },
+      // ),
+      title: "Companion".text.make(),
+      actions: [
+        (kDebugMode == true)
+            ? Consumer(
                 builder: (context, ref, child) {
                   return IconButton(
                     icon: Icon(Icons.refresh_outlined),
@@ -67,10 +60,16 @@ class HomePage extends ConsumerWidget {
                     },
                   );
                 },
-              ),
-              8.w.widthBox,
-            ]
-          : null,
+              )
+            : SizedBox(),
+        IconButton(
+          onPressed: () async {
+            context.pushRoute(SettingsRoute());
+          },
+          icon: Icon(Icons.person_outline_outlined),
+        ),
+        16.w.widthBox,
+      ],
     );
   }
 
@@ -94,8 +93,8 @@ class HomePage extends ConsumerWidget {
     );
   }
 
-  _buildFAB(BuildContext context, TabsRouter tabsRouter) {
-    final bool isContactsPage = tabsRouter.currentPath == "/contacts";
+  _buildFAB(BuildContext context, TabsRouter router) {
+    final bool isContactsPage = router.currentPath == "/contacts";
 
     return FloatingActionButton(
       elevation: 0,
@@ -115,6 +114,6 @@ class HomePage extends ConsumerWidget {
             ? Icons.person_add_outlined
             : Icons.add_business_outlined,
       ),
-    );
+    ).pOnly(bottom: 8.h, right: 8.w);
   }
 }

@@ -187,12 +187,13 @@ class ContactDetailsPage extends ConsumerWidget {
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 8.h,
       children: [
         "Contacts".text.make().pOnly(left: 4.w),
-        8.h.heightBox,
         ListView.builder(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
           itemCount: pims.length,
           reverse: true,
           itemBuilder: (context, index) {

@@ -1,16 +1,15 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_ce_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-
 import 'package:companion/src/core/routes/router.dart';
 import 'package:companion/src/core/widgets/with_screen_util.dart';
 import 'package:companion/src/features/settings/models/settings_model.dart';
 import 'package:companion/src/features/settings/pods/settings_pod.dart';
 import 'package:companion/src/hive/hive_pod.dart';
 import 'package:companion/src/hive/hive_registrar.g.dart';
+import 'package:companion/src/utils/app_theme.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_ce_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -58,8 +57,8 @@ class MainApp extends ConsumerWidget {
       ),
       child: WithScreenUtil(
         child: MaterialApp.router(
-          theme: ThemeData(useMaterial3: true),
-          darkTheme: ThemeData.dark(useMaterial3: true),
+          theme: AppTheme.light,
+          darkTheme: AppTheme.dark,
           themeMode: isDarkModeEnabled ? ThemeMode.dark : ThemeMode.light,
           debugShowCheckedModeBanner: false,
           routerConfig: router.config(),

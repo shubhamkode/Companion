@@ -28,6 +28,8 @@
 ### Up Coming
 
     - [ ] Customization Page
+    - [ ] Shopping List
+    - [ ] Debtors Management Options
 
 ### Bugs
 

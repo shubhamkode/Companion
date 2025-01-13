@@ -19,7 +19,7 @@ class CompaniesList extends StatelessWidget {
       return "No Companies Found..."
           .text
           .bodyLarge(context)
-          .slate400
+          .color(context.colors.onSurface.withAlpha(200))
           .makeCentered();
     }
     return RefreshIndicator(

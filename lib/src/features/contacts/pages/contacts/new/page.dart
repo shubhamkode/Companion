@@ -96,6 +96,7 @@ class _NewContactPageState extends ConsumerState<NewContactPage> {
               BasicDetailsSection(
                 nameController: _nameController,
                 distributorController: _distributorController,
+                autoFocus: true,
               ),
             ],
             spacing: 12.h,
@@ -185,8 +186,10 @@ class _NewContactPageState extends ConsumerState<NewContactPage> {
 
     final contact = ContactModel(
       id: uuid(),
-      name: _nameController.text,
-      distributor: _distributorController.text,
+      name: _nameController.text.trim(),
+      distributor: _distributorController.text.trim().isEmpty
+          ? "None"
+          : _distributorController.text.trim(),
       created: DateTime.now().toString(),
       hexColor: Vx.randomColor.toHex(leadingHashSign: true),
     );

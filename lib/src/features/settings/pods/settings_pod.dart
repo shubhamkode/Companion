@@ -72,7 +72,7 @@ class SettingsPod extends _$SettingsPod {
   /// Insert dummy data in the database
   ///
   /// Only available in [Debug] mode.
-  /// It will clear all the data in the database and then inserts the dummy data
+  /// It will clear all the data in the database and then insert the dummy data
   Future<void> refresh() async {
     await clearAllData();
 
