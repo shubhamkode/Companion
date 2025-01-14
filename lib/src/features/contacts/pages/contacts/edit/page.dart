@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/widgets/pim_controller.dart';
+import 'package:companion/src/features/companies/pages/company_details_page.dart';
 import 'package:companion/src/features/companies_to_contact/models/comp_to_conc_model.dart';
 import 'package:companion/src/features/contacts/models/contact_model.dart';
 import 'package:companion/src/features/contacts/pages/contacts/new/sections/basic_details_section.dart';
@@ -104,94 +105,96 @@ class _EditContactPageState extends ConsumerState<EditContactPage> {
   }
 
   _buildBody() {
-    return FormBuilder(
-      key: _formKey,
-      child: VStack(
-        [
-          VStack(
-            [
-              "Basic Details".text.labelSmall(context).make(),
-              BasicDetailsSection(
-                nameController: _nameController,
-                distributorController: _distributorController,
-              ),
-            ],
-            spacing: 12.h,
-          ),
-          VStack(
-            [
-              "Contact Details".text.labelSmall(context).make(),
-              CreatePimSection(
-                controllers: _pimControllers,
-                onControllerRemove: _pimControllers.length > 1
-                    ? (controllerId) {
-                        setState(() {
-                          _pimControllers.removeWhere(
-                              (element) => element.id == controllerId);
-                        });
-                      }
-                    : null,
-              ),
-              "Add Phone"
-                  .text
-                  .color(context.colors.primary)
-                  .fontWeight(FontWeight.w600)
-                  .make()
-                  .pOnly(left: 4.w)
-                  .objectCenterLeft()
-                  .onTap(() {
-                setState(() {
-                  _pimControllers = [
-                    PimController(id: uuid(), text: ""),
-                    ..._pimControllers
-                  ];
-                });
-              }),
-            ],
-            spacing: 12.h,
-          ),
-          VStack(
-            [
-              "Select Companies".text.labelSmall(context).make(),
-              FilledButton(
-                style: FilledButton.styleFrom(
-                  minimumSize: Size.fromHeight(48),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  backgroundColor: context.colors.secondaryContainer,
-                  foregroundColor: context.colors.onSecondaryContainer,
+    return SingleChildScrollView(
+      child: FormBuilder(
+        key: _formKey,
+        child: VStack(
+          [
+            VStack(
+              [
+                "Basic Details".text.labelSmall(context).make(),
+                BasicDetailsSection(
+                  nameController: _nameController,
+                  distributorController: _distributorController,
                 ),
-                onPressed: () async {
-                  // assignCompanies();
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      fullscreenDialog: true,
-                      builder: (context) {
-                        return FullScreenCompanySelector();
-                      },
+              ],
+              spacing: 12.h,
+            ),
+            VStack(
+              [
+                "Contact Details".text.labelSmall(context).make(),
+                CreatePimSection(
+                  controllers: _pimControllers,
+                  onControllerRemove: _pimControllers.length > 1
+                      ? (controllerId) {
+                          setState(() {
+                            _pimControllers.removeWhere(
+                                (element) => element.id == controllerId);
+                          });
+                        }
+                      : null,
+                ),
+                "Add Phone"
+                    .text
+                    .color(context.colors.primary)
+                    .fontWeight(FontWeight.w600)
+                    .make()
+                    .pOnly(left: 4.w)
+                    .objectCenterLeft()
+                    .onTap(() {
+                  setState(() {
+                    _pimControllers = [
+                      PimController(id: uuid(), text: ""),
+                      ..._pimControllers
+                    ];
+                  });
+                }),
+              ],
+              spacing: 12.h,
+            ),
+            VStack(
+              [
+                "Select Companies".text.labelSmall(context).make(),
+                FilledButton(
+                  style: FilledButton.styleFrom(
+                    minimumSize: Size.fromHeight(48),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
-                  );
-                },
-                child: Consumer(
-                  builder: (context, ref, child) {
-                    final companiesSelected = ref.watch(
-                        multiSelectCompanyNotifier
-                            .select((notifier) => notifier.length));
-                    return "Companies Selected: $companiesSelected"
-                        .text
-                        .size(12.sp)
-                        .make();
+                    backgroundColor: context.colors.secondaryContainer,
+                    foregroundColor: context.colors.onSecondaryContainer,
+                  ),
+                  onPressed: () async {
+                    // assignCompanies();
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        fullscreenDialog: true,
+                        builder: (context) {
+                          return FullScreenCompanySelector();
+                        },
+                      ),
+                    );
                   },
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final companiesSelected = ref.watch(
+                          multiSelectCompanyNotifier
+                              .select((notifier) => notifier.length));
+                      return "Companies Selected: $companiesSelected"
+                          .text
+                          .size(12.sp)
+                          .make();
+                    },
+                  ),
                 ),
-              ),
-            ],
-            spacing: 12.h,
-          )
-        ],
-        spacing: 16.h,
-      ).pSymmetric(h: 16.w, v: 12.h),
+              ],
+              spacing: 12.h,
+            )
+          ],
+          spacing: 16.h,
+        ).pSymmetric(h: 16.w, v: 12.h),
+      ),
     );
   }
 
@@ -249,5 +252,6 @@ class _EditContactPageState extends ConsumerState<EditContactPage> {
     );
     ref.invalidate(multiSelectCompanyNotifier);
     ref.invalidate(contactPodProvider);
+    ref.invalidate(companyDetailsProvider);
   }
 }

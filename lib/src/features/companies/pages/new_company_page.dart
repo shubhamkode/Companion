@@ -1,14 +1,12 @@
-import 'package:flutter/material.dart';
-
 import 'package:auto_route/auto_route.dart';
+import 'package:companion/src/features/companies/pods/company_pod.dart';
+import 'package:companion/src/utils/input_decoration.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:velocity_x/velocity_x.dart';
-
-import 'package:companion/src/features/companies/pods/company_pod.dart';
-import 'package:companion/src/utils/input_decoration.dart';
 
 @RoutePage()
 class NewCompanyPage extends ConsumerStatefulWidget {
@@ -73,7 +71,6 @@ class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
       [
         12.h.heightBox,
         FormBuilder(
-          autovalidateMode: AutovalidateMode.onUserInteraction,
           onChanged: () {
             if (_formKey.currentState!.isValid) {
               setState(() {
@@ -91,15 +88,18 @@ class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
               FormBuilderTextField(
                 name: "name",
                 decoration: getDecoration(hint: 'Name'),
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+          textCapitalization: TextCapitalization.words,
+                autofocus: true,
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
                   FormBuilderValidators.minLength(2),
-                  FormBuilderValidators.maxLength(30),
                 ]),
               ),
               12.h.heightBox,
               FormBuilderTextField(
                 name: "description",
+                autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: getDecoration(hint: "Description"),
                 maxLines: 5,
                 validator: FormBuilderValidators.compose([

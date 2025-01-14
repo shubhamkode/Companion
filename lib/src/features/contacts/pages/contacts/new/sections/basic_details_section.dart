@@ -26,6 +26,7 @@ class BasicDetailsSection extends StatelessWidget {
           decoration: getDecoration(hint: "Name"),
           controller: nameController,
           autovalidateMode: AutovalidateMode.onUserInteraction,
+          textInputAction: TextInputAction.next,
           textCapitalization: TextCapitalization.words,
           autofocus: autoFocus == true,
           validator: FormBuilderValidators.compose(

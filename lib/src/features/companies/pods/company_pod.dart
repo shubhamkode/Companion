@@ -1,4 +1,5 @@
 import 'package:companion/src/features/companies/models/company_model.dart';
+import 'package:companion/src/features/companies/pages/company_details_page.dart';
 import 'package:companion/src/features/companies/repositories/company_repository.dart';
 import 'package:companion/src/features/companies_to_contact/repositories/company_to_contact_repository.dart';
 import 'package:companion/src/features/contacts/pages/contact_details_page.dart';
@@ -65,5 +66,6 @@ class CompanyPod extends _$CompanyPod {
       await repo.update(companyModel.id, companyModel);
       ref.invalidateSelf();
     });
+    ref.invalidate(companyDetailsProvider);
   }
 }

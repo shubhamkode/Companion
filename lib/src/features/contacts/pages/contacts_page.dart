@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/widgets/search_field.dart';
 import 'package:companion/src/features/contacts/models/contact_model.dart';
 import 'package:companion/src/features/contacts/pods/contact_pod.dart';
+import 'package:companion/src/features/contacts/repositories/contact_repository.dart';
 import 'package:companion/src/features/contacts/widgets/contact_tile.dart';
 import 'package:companion/src/features/contacts/widgets/contacts_list.dart';
+import 'package:companion/src/features/pims/repositories/pim_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -46,10 +48,39 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
               hintEmpty: "No Contacts Found",
               hintText: "Search Contacts",
               searchController: searchController,
-              suggestionsBuilder: (context, controller) {
+              suggestionsBuilder: (context, controller) async {
                 if (controller.text.isEmpty) {
                   return [];
                 }
+
+                if (controller.text.isNumber()) {
+                  final List<ContactTile> filteredContactTiles = [];
+                  final pimDigit = controller.text;
+                  final pims = await ref.read(pimRepositoryProvider).readAll();
+                  final filteredUniqueContactIds = pims
+                      .filter((pim) => pim.digits.contains(pimDigit))
+                      .toList()
+                      .builder((p) => p.contactId)
+                      .toSet()
+                      .toList();
+
+                  for (var id in filteredUniqueContactIds) {
+                    final contact =
+                        await ref.read(contactRepositoryProvider).read(id);
+                    if (contact != null) {
+                      filteredContactTiles.add(
+                        ContactTile(
+                          contact: contact,
+                          onPop: () {
+                            searchController.closeView("");
+                          },
+                        ),
+                      );
+                    }
+                  }
+                  return filteredContactTiles;
+                }
+
                 final filteredContacts = contacts
                     .filter(
                       (contact) => contact.name.toLowerCase().contains(
