@@ -25,13 +25,14 @@ class CompaniesList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: ListView.separated(
+        padding: EdgeInsets.only(bottom: 12.h),
         itemCount: companies.length,
         itemBuilder: (context, index) {
           return CompanyCard(
             company: companies[index],
           );
         },
-        separatorBuilder: (_, __) => 4.h.heightBox,
+        separatorBuilder: (_, __) => 8.h.heightBox,
       ),
     );
   }

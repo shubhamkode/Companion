@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:companion/src/features/companies/models/company_model.dart';
 import 'package:companion/src/features/companies/pods/company_pod.dart';
 import 'package:companion/src/utils/input_decoration.dart';
+import 'package:companion/src/utils/uuid.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,33 +11,46 @@ import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
-class NewCompanyPage extends ConsumerStatefulWidget {
+class NewCompanyPage extends StatefulWidget {
   const NewCompanyPage({super.key});
 
   @override
-  ConsumerState<NewCompanyPage> createState() => _NewCompanyPageState();
+  State<NewCompanyPage> createState() => _NewCompanyPageState();
 }
 
-class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
+class _NewCompanyPageState extends State<NewCompanyPage> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _descriptionController;
+
   late final GlobalKey<FormBuilderState> _formKey;
-  bool isSubmitDisabled = true;
+
+  Future<bool> saveCompany(WidgetRef ref) async {
+    await ref.read(companyPodProvider.notifier).create(
+          CompanyModel(
+            id: uuid(),
+            name: _nameController.text.trim(),
+            description: _descriptionController.text.trim(),
+            hexColor: Vx.randomPrimaryColor.toHex(leadingHashSign: true),
+          ),
+          // name: _nameController.text.trim(),
+          // description: _descriptionController.text.trim(),
+        );
+    return true;
+  }
 
   @override
   void initState() {
     super.initState();
+    _nameController = TextEditingController();
+    _descriptionController = TextEditingController();
     _formKey = GlobalKey<FormBuilderState>();
   }
 
-  Future<bool> createNewCompany() async {
-    _formKey.currentState!.saveAndValidate();
-
-    final values = _formKey.currentState!.value;
-
-    await ref.read(companyPodProvider.notifier).create(
-          name: values['name'],
-          description: values["description"],
-        );
-    return true;
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -51,15 +66,20 @@ class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
       titleSpacing: 0,
       title: "New Company".text.make(),
       actions: [
-        FilledButton(
-          onPressed: !isSubmitDisabled
-              ? () async {
-                  if (await createNewCompany() && mounted) {
-                    context.back();
-                  }
+        Consumer(
+          builder: (context, ref, child) {
+            return FilledButton(
+              onPressed: () async {
+                if (_formKey.currentState!.validate() &&
+                    await saveCompany(ref)) {
+                  context
+                    ..mounted
+                    ..maybePop();
                 }
-              : null,
-          child: "Save".text.make(),
+              },
+              child: "Save".text.size(12.sp).make(),
+            );
+          },
         ),
         16.w.widthBox,
       ],
@@ -67,50 +87,58 @@ class _NewCompanyPageState extends ConsumerState<NewCompanyPage> {
   }
 
   _buildBody() {
+    return VStack([
+      FormBuilder(
+        key: _formKey,
+        child: CompanyForm(
+          nameController: _nameController,
+          descriptionController: _descriptionController,
+        ),
+      ),
+    ]).pSymmetric(h: 12.h, v: 16.w);
+  }
+}
+
+class CompanyForm extends StatelessWidget {
+  final TextEditingController nameController;
+  final TextEditingController descriptionController;
+  const CompanyForm({
+    super.key,
+    required this.nameController,
+    required this.descriptionController,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return VStack(
       [
-        12.h.heightBox,
-        FormBuilder(
-          onChanged: () {
-            if (_formKey.currentState!.isValid) {
-              setState(() {
-                isSubmitDisabled = false;
-              });
-            } else {
-              setState(() {
-                isSubmitDisabled = true;
-              });
-            }
-          },
-          key: _formKey,
-          child: VStack(
-            [
-              FormBuilderTextField(
-                name: "name",
-                decoration: getDecoration(hint: 'Name'),
-                autovalidateMode: AutovalidateMode.onUserInteraction,
+        FormBuilderTextField(
+          name: "name",
+          decoration: getDecoration(hint: 'Name'),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          controller: nameController,
           textCapitalization: TextCapitalization.words,
-                autofocus: true,
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.minLength(2),
-                ]),
-              ),
-              12.h.heightBox,
-              FormBuilderTextField(
-                name: "description",
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                decoration: getDecoration(hint: "Description"),
-                maxLines: 5,
-                validator: FormBuilderValidators.compose([
-                  FormBuilderValidators.required(),
-                  FormBuilderValidators.minLength(2)
-                ]),
-              )
-            ],
-          ).pSymmetric(h: 16.w),
+          textInputAction: TextInputAction.next,
+          autofocus: true,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(2),
+          ]),
+        ),
+        FormBuilderTextField(
+          name: "description",
+          decoration: getDecoration(hint: 'Description'),
+          autovalidateMode: AutovalidateMode.onUserInteraction,
+          textCapitalization: TextCapitalization.sentences,
+          controller: descriptionController,
+          maxLines: 5,
+          validator: FormBuilderValidators.compose([
+            FormBuilderValidators.required(),
+            FormBuilderValidators.minLength(2),
+          ]),
         ),
       ],
+      spacing: 12.h,
     );
   }
 }
