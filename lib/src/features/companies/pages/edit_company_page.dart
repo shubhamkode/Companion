@@ -20,7 +20,7 @@ class EditCompanyPage extends ConsumerStatefulWidget {
 
 class _EditCompanyPageState extends ConsumerState<EditCompanyPage> {
   late final GlobalKey<FormBuilderState> _formKey;
-  bool isSubmitDisabled = true;
+  bool isSubmitDisabled = false;
 
   @override
   void initState() {
@@ -35,7 +35,9 @@ class _EditCompanyPageState extends ConsumerState<EditCompanyPage> {
 
     await ref.read(companyPodProvider.notifier).patch(
           widget.company.copyWith(
-              name: values["name"], description: values['description']),
+            name: values["name"],
+            description: values['description'],
+          ),
         );
     return true;
   }
@@ -91,11 +93,11 @@ class _EditCompanyPageState extends ConsumerState<EditCompanyPage> {
               FormBuilderTextField(
                 name: "name",
                 initialValue: widget.company.name,
+                textCapitalization: TextCapitalization.words,
                 decoration: getDecoration(hint: 'Name'),
                 validator: FormBuilderValidators.compose([
                   FormBuilderValidators.required(),
                   FormBuilderValidators.minLength(2),
-                  FormBuilderValidators.maxLength(30),
                 ]),
               ),
               12.h.heightBox,

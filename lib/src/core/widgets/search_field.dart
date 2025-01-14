@@ -51,19 +51,16 @@ class SearchField<T> extends StatelessWidget {
       viewBuilder: (widgets) {
         return VStack(
           [
-            widgets.isEmpty
-                ? hintEmpty.text
-                    .bodyLarge(context)
-                    .slate400
-                    .makeCentered()
-                    .pOnly(top: 100.h)
-                : ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: widgets.toList().length,
-                    itemBuilder: (context, index) {
-                      return widgets.toList()[index];
-                    },
-                  ).expand()
+            (widgets.isEmpty
+                    ? hintEmpty.text.bodyLarge(context).slate400.makeCentered()
+                    : ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: widgets.toList().length,
+                        itemBuilder: (context, index) {
+                          return widgets.toList()[index];
+                        },
+                      ))
+                .expand()
           ],
         );
       },
