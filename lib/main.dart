@@ -45,6 +45,7 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final router = ref.watch(routerPodProvider);
+
     final isDarkModeEnabled = ref.watch(
       settingsPodProvider.select((pod) => pod.isDarkModeEnabled),
     );
