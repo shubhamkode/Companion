@@ -32,8 +32,6 @@ class _NewCompanyPageState extends State<NewCompanyPage> {
             description: _descriptionController.text.trim(),
             hexColor: Vx.randomPrimaryColor.toHex(leadingHashSign: true),
           ),
-          // name: _nameController.text.trim(),
-          // description: _descriptionController.text.trim(),
         );
     return true;
   }

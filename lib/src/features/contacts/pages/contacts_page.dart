@@ -8,6 +8,7 @@ import 'package:companion/src/features/contacts/widgets/contacts_list.dart';
 import 'package:companion/src/features/pims/repositories/pim_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
@@ -105,7 +106,7 @@ class _ContactsPageState extends ConsumerState<ContactsPage> {
               },
             ).expand(),
           ],
-          // spacing: 8.h,
+          spacing: 8.h,
         );
       },
     );
