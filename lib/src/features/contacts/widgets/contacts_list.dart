@@ -1,6 +1,7 @@
 import 'package:companion/src/features/contacts/models/contact_model.dart';
 import 'package:companion/src/features/contacts/widgets/contact_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 class ContactsList extends StatelessWidget {
@@ -23,7 +24,7 @@ class ContactsList extends StatelessWidget {
     return RefreshIndicator(
       onRefresh: onRefresh,
       child: ListView.builder(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.only(bottom: 10.h, top: 0.h),
         itemCount: contacts.length,
         itemBuilder: (context, index) {
           return ContactTile(

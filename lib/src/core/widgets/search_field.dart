@@ -26,15 +26,23 @@ class SearchField<T> extends StatelessWidget {
         },
       ),
       builder: (context, controller) {
-        return VxTextField(
-          borderType: VxTextFieldBorderType.roundLine,
-          hint: "Search",
-          style: context.textTheme.labelLarge,
-          controller: controller,
-          enabled: false,
-        ).onTap(() {
-          controller.openView();
-        });
+        return TextField(
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(25.r),
+              borderSide: BorderSide.none,
+            ),
+            enabled: false,
+            contentPadding: EdgeInsets.symmetric(horizontal: 24.w),
+            filled: true,
+            fillColor: context.colors.secondaryContainer.withAlpha(180),
+            hintText: "Search",
+            hintStyle: TextStyle(
+              color: context.colors.onSecondaryContainer.withAlpha(180),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        );
       },
       suggestionsBuilder: suggestionsBuilder,
       viewHintText: hintText,

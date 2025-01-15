@@ -91,6 +91,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ListTile(
               leading: Icon(Icons.save_outlined),
               title: "Backup Dir".text.make(),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.r),
+              ),
               subtitle: backupPath?.text.make(),
               onTap: () async {
                 await ref.read(settingsPodProvider.notifier).changeBackupPath();
@@ -167,7 +170,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       }
                     }).expand(),
               ],
-              spacing: 12.w,
+              spacing: 8.w,
             ),
             // 4.h.heightBox,
             ActionButton(
@@ -191,7 +194,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               },
             ).wFull(context),
           ],
-          spacing: 4.h,
+          spacing: 2.h,
         ),
       ],
       spacing: 8.h,

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+// import 'package:sidebarx/sidebarx.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
@@ -22,6 +23,7 @@ class HomePage extends ConsumerWidget {
       builder: (context, child, _) {
         final tabsRouter = AutoTabsRouter.of(context);
         return Scaffold(
+          // drawer: _buildDrawer(context),
           appBar: _buildAppBar(context),
           body: child,
           floatingActionButton: _buildFAB(context, tabsRouter),
@@ -38,16 +40,7 @@ class HomePage extends ConsumerWidget {
       scrolledUnderElevation: 0,
       backgroundColor: Theme.of(context).colorScheme.surface,
       titleSpacing: 16.w,
-
-      // leading: DrawerButton(
-      //   onPressed: () {
-      //     context.showToast(
-      //       msg: "Feature Not Implemented Yet",
-      //       bgColor: context.colors.errorContainer,
-      //       textColor: context.colors.onErrorContainer,
-      //     );
-      //   },
-      // ),
+      // leading: DrawerButton(),
       title: "Companion".text.make(),
       actions: [
         (kDebugMode == true)

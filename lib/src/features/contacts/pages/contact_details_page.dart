@@ -41,7 +41,19 @@ class ContactDetailsPage extends ConsumerWidget {
   }
 
   _buildAppBar(BuildContext context) {
-    return AppBar();
+    return AppBar(
+      actions: [
+        IconButton(
+          onPressed: () {
+            //Todo- push to edit page route
+          },
+          icon: Icon(
+            Icons.edit_outlined,
+          ),
+        ),
+        16.w.widthBox
+      ],
+    );
   }
 
   _buildBody(BuildContext context) {

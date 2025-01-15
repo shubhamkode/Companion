@@ -92,11 +92,7 @@ class _CompaniesPageState extends ConsumerState<CompaniesPage> {
                 ref.invalidate(companyPodProvider);
               },
               companies: companies,
-            )
-                .pSymmetric(
-                  h: 16.w,
-                )
-                .expand(),
+            ).pSymmetric(h: 16.w).expand(),
           ],
           spacing: 8.h,
         );

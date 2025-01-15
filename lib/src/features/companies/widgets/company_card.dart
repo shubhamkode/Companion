@@ -29,6 +29,15 @@ class CompanyCard extends ConsumerWidget {
               borderRadius: BorderRadius.circular(6.r),
             ),
             height: 120.h,
+            child: Center(
+              child: (company.name.split(" ")[0])
+                  .replaceFirst(",", "")
+                  .text
+                  .displayMedium(context)
+                  .color(context.colors.onSurface.withAlpha(150))
+                  .center
+                  .make(),
+            ),
           ).p8(),
           ListTile(
             leading: Hero(

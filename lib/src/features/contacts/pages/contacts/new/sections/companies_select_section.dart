@@ -43,7 +43,6 @@ class _FullScreenCompanySelectorState
       canPop: searchTextController.text.isEmpty,
       onPopInvokedWithResult: (didPop, result) {
         if (didPop) return;
-
         setState(() {
           searchTextController.text = "";
           _searchFocus.unfocus();
