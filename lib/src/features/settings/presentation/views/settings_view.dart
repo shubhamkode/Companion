@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,7 +97,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               ),
               subtitle: backupPath?.text.make(),
               onTap: () async {
-                // await ref.read(settingsPodProvider.notifier).changeBackupPath();
+                await ref
+                    .read(settingsNotifierProvider.notifier)
+                    .changeBackupPath();
               },
             ),
             HStack(
@@ -106,9 +109,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   label: "Import Data".text.make(),
                   onPressed: () async {
                     try {
-                      // await ref
-                      //     .read(settingsPodProvider.notifier)
-                      //     .importBackup();
                       context
                         ..mounted
                         ..showToast(
@@ -174,29 +174,30 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               spacing: 8.w,
             ),
             // 4.h.heightBox,
-            ActionButton(
-              icon: Icons.delete_outline_outlined,
-              label: "Clear all Data".text.make(),
-              onPressed: () async {
-                if (await confirm(context,
-                    title: Text("Delete all Data").wFull(context),
-                    content: Text("All your data will be deleted."),
-                    textOK: Text("Proceed"),
-                    textCancel: Text("Cancel"))) {
-                  if (await confirm(context..mounted,
-                      title: Text("Are your sure?"),
-                      content: Text(
-                          "You won't be able to recover your data if you don't have a backup?"),
-                      textOK: Text("Sure"),
+            if (kDebugMode)
+              ActionButton(
+                icon: Icons.delete_outline_outlined,
+                label: "Clear all Data".text.make(),
+                onPressed: () async {
+                  if (await confirm(context,
+                      title: Text("Delete all Data").wFull(context),
+                      content: Text("All your data will be deleted."),
+                      textOK: Text("Proceed"),
                       textCancel: Text("Cancel"))) {
-                    await ref
-                        .read(settingsNotifierProvider.notifier)
-                        .clearAllData();
-                    // await ref.read(settingsPodProvider.notifier).clearAllData();
+                    if (await confirm(context..mounted,
+                        title: Text("Are your sure?"),
+                        content: Text(
+                            "You won't be able to recover your data if you don't have a backup?"),
+                        textOK: Text("Sure"),
+                        textCancel: Text("Cancel"))) {
+                      await ref
+                          .read(settingsNotifierProvider.notifier)
+                          .clearAllData();
+                      // await ref.read(settingsPodProvider.notifier).clearAllData();
+                    }
                   }
-                }
-              },
-            ).wFull(context),
+                },
+              ).wFull(context),
           ],
           spacing: 2.h,
         ),

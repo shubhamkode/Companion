@@ -8,6 +8,10 @@ import 'package:companion/src/features/company/data/data_sources/local/local_com
 import 'package:companion/src/features/company/data/repositories/company_repository_impl.dart';
 import 'package:companion/src/features/company/domain/repositories/company_repository.dart';
 import 'package:companion/src/features/company/domain/usecases/company_usecase.dart';
+import 'package:companion/src/features/company_to_agent/data/data_sources/local/local_company_to_agent_datasource.dart';
+import 'package:companion/src/features/company_to_agent/data/repositories/company_to_agent_repository_impl.dart';
+import 'package:companion/src/features/company_to_agent/domain/repositories/company_to_agent_repository.dart';
+import 'package:companion/src/features/company_to_agent/domain/usecases/company_to_agent_usecase.dart';
 import 'package:companion/src/features/settings/data/data_sources/local/local_settings_datasource.dart';
 import 'package:companion/src/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:companion/src/features/settings/domain/repositories/settings_repository.dart';
@@ -40,6 +44,12 @@ final localCompanyDataSourceProvider = Provider<LocalCompanyDataSource>((ref) {
   return LocalCompanyDataSourceImpl(database: database);
 });
 
+final localCompanyToAgentDataSourceProvider =
+    Provider<LocalCompanyToAgentDataSource>((ref) {
+  final database = ref.watch(databaseProvider);
+  return LocalCompanyToAgentDataSourceImpl(database: database);
+});
+
 final localSettingsDataSourceProvider =
     Provider<LocalSettingsDataSource>((ref) {
   final instance = ref.watch(sharedPreferencesProvider);
@@ -51,6 +61,7 @@ final agentRepositoryProvider = Provider<AgentRepository>((ref) {
   final localDataSource = ref.watch(localAgentDataSourceProvider);
   return AgentRepositoryImpl(localDataSource: localDataSource);
 });
+
 final companyRepositoryProvider = Provider<CompanyRepository>((ref) {
   final localDataSource = ref.watch(localCompanyDataSourceProvider);
   return CompanyRepositoryImpl(localCompanyDataSource: localDataSource);
@@ -59,6 +70,12 @@ final companyRepositoryProvider = Provider<CompanyRepository>((ref) {
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   final dataSource = ref.watch(localSettingsDataSourceProvider);
   return SettingsRepositoryImpl(dataSource: dataSource);
+});
+
+final companyToAgentRepositoryProvider =
+    Provider<CompanyToAgentRepository>((ref) {
+  final dataSource = ref.watch(localCompanyToAgentDataSourceProvider);
+  return CompanyToAgentRepositoryImpl(dataSource: dataSource);
 });
 
 /// [UseCases]
@@ -73,4 +90,9 @@ final companyUseCaseProvider = Provider<CompanyUsecase>((ref) {
   return CompanyUsecase(
     repository: repository,
   );
+});
+
+final companyToAgentUsecaseProvider = Provider<CompanyToAgentUsecase>((ref) {
+  final repository = ref.watch(companyToAgentRepositoryProvider);
+  return CompanyToAgentUsecase(repository: repository);
 });

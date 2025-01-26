@@ -15,7 +15,7 @@ class CompaniesList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
-      padding: EdgeInsets.only(bottom: 8.h),
+      padding: EdgeInsets.only(bottom: 50.h),
       itemCount: companies.length,
       itemBuilder: (context, index) {
         return CompanyCard(company: companies[index]).pSymmetric(

@@ -4,6 +4,7 @@ import 'package:companion/src/features/agent/presentation/views/agent_view.dart'
 import 'package:companion/src/features/agent/presentation/views/new_agent_view/new_agent_view.dart';
 import 'package:companion/src/features/company/presentation/views/company_view.dart';
 import 'package:companion/src/features/company/presentation/views/new_company_view.dart';
+import 'package:companion/src/features/company_to_agent/presentation/views/company_to_agent_view.dart';
 import 'package:companion/src/features/settings/presentation/views/settings_view.dart';
 import 'package:companion/src/shared/home/presentation/views/home_view.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +58,11 @@ class AppRouter extends RootStackRouter {
         AutoRoute(
           path: '/settings',
           page: SettingsRoute.page,
-        )
+        ),
+        AutoRoute(
+          path: '/company-to-agent',
+          page: CompanyToAgentRoute.page,
+          fullscreenDialog: true,
+        ),
       ];
 }

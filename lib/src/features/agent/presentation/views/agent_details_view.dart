@@ -1,4 +1,6 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:companion/src/core/router/router.dart';
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/core/utils/extensions.dart';
 import 'package:companion/src/core/utils/make_call.dart';
@@ -13,15 +15,23 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
-class AgentDetailsView extends StatelessWidget {
+class AgentDetailsView extends ConsumerWidget {
   final String agentId;
   const AgentDetailsView({super.key, required this.agentId});
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: _buildBody(context),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) {
+          ref.read(cardOpenProvider.notifier).update((state) => false);
+        }
+      },
+      child: Scaffold(
+        appBar: _buildAppBar(context),
+        body: _buildBody(context),
+      ),
     );
   }
 
@@ -37,9 +47,7 @@ class AgentDetailsView extends StatelessWidget {
       builder: (context, ref, _) {
         final agentDetails = ref.watch(agentDetailsProvider(agentId));
         return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(agentDetailsProvider);
-          },
+          onRefresh: () => ref.refresh(agentDetailsProvider(agentId).future),
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: agentDetails.onData(
@@ -51,19 +59,45 @@ class AgentDetailsView extends StatelessWidget {
                       agent: details.agent,
                     ),
                     12.h.heightBox,
-                    _buildActions(context, details: details),
+                    FadeIn(
+                      child: _buildActions(
+                        context,
+                        details: details,
+                      ),
+                    ),
                     12.h.heightBox,
-                    _buildContactsCard(
-                      context,
-                      contacts: details.agent.contacts,
+                    FadeIn(
+                      animate: true,
+                      child: _buildContactsCard(
+                        context,
+                        contacts: details.agent.contacts,
+                      ),
                     ),
                     4.h.heightBox,
-                    _buildCompanies(
-                      context,
-                      companies: details.linkedCompanies,
+                    FadeIn(
+                      child: CompaniesCard(
+                        companies: details.linkedCompanies,
+                      ).wFull(context).pSymmetric(h: 8.w),
                     ),
                     12.h.heightBox,
                     Divider(),
+                    ListTile(
+                      minTileHeight: 0,
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 4.h, horizontal: 24.w),
+                      leading: Icon(
+                        Icons.add_business_outlined,
+                      ),
+                      onTap: () {
+                        ref
+                            .read(cardOpenProvider.notifier)
+                            .update((state) => false);
+                        context.pushRoute(
+                          CompanyToAgentRoute(agentId: agentId),
+                        );
+                      },
+                      title: "Link or Unlink Company".text.make(),
+                    ),
                     ListTile(
                       minTileHeight: 0,
                       contentPadding:
@@ -167,45 +201,6 @@ class AgentDetailsView extends StatelessWidget {
     ).wFull(context).pSymmetric(h: 8.w);
   }
 
-  _buildCompanies(
-    BuildContext context, {
-    required List<CompanyEntity> companies,
-  }) {
-    if (companies.isEmpty) {
-      return SizedBox();
-    }
-
-    return Card.filled(
-      child: VStack(
-        [
-          "Companies".text.titleSmall(context).make().pOnly(left: 16.w),
-          4.h.heightBox,
-          ListView.builder(
-            padding: EdgeInsets.zero,
-            shrinkWrap: true,
-            physics: NeverScrollableScrollPhysics(),
-            itemCount: companies.length,
-            itemBuilder: (context, index) {
-              final company = companies[index];
-              return ListTile(
-                contentPadding: EdgeInsets.only(left: 20.w, right: 12.w),
-                leading: CircleAvatar(
-                  backgroundColor: company.hexColor,
-                  child: company.name[0].text
-                      .titleLarge(context)
-                      .color(context.colors.surface)
-                      .make(),
-                ),
-                title: company.name.text.make(),
-                subtitle: company.description.text.maxLines(1).make(),
-              );
-            },
-          ),
-        ],
-      ).pOnly(top: 12.h, bottom: 8.h),
-    ).wFull(context).pSymmetric(h: 8.w);
-  }
-
   _buildActions(
     BuildContext context, {
     required AgentDetailsEntity details,
@@ -259,6 +254,7 @@ final agentDetailsProvider = FutureProvider.family<AgentDetailsEntity, String>(
 
     final linkedCompanies = await database.managers.companyTable
         .filter((f) => f.id.isIn(linkedCompanyIds))
+        .orderBy((o) => o.name.asc())
         .get();
 
     return AgentDetailsEntity(
@@ -267,3 +263,114 @@ final agentDetailsProvider = FutureProvider.family<AgentDetailsEntity, String>(
     );
   },
 );
+
+class CompaniesCard extends ConsumerStatefulWidget {
+  final List<CompanyEntity> companies;
+  const CompaniesCard({
+    super.key,
+    required this.companies,
+  });
+
+  // bool _isExpanded = false;
+
+  @override
+  ConsumerState<CompaniesCard> createState() => _CompaniesCardState();
+}
+
+class _CompaniesCardState extends ConsumerState<CompaniesCard> {
+  final GlobalKey<AnimatedListState> _companiesListKey =
+      GlobalKey<AnimatedListState>();
+  @override
+  Widget build(BuildContext context) {
+    final isExpanded = ref.watch(cardOpenProvider);
+
+    ref.listen(cardOpenProvider, (prev, curr) {
+      if (curr == true) {
+        _companiesListKey.currentState!.insertAllItems(
+          2,
+          widget.companies.length - 2,
+        );
+      } else {
+        final reverseIdx = List.generate(
+          widget.companies.length - 2,
+          (index) => widget.companies.length - index - 1,
+        );
+        while (reverseIdx.isNotEmpty) {
+          final idx = reverseIdx.removeAt(0);
+          _companiesListKey.currentState!.removeItem(
+            idx,
+            (context, animation) => _companyTile(
+              context,
+              widget.companies[idx],
+              animation,
+            ),
+          );
+        }
+      }
+    });
+
+    return Card.filled(
+      child: VStack(
+        [
+          "Companies".text.titleSmall(context).make().pOnly(left: 16.w),
+          4.h.heightBox,
+          AnimatedList(
+            key: _companiesListKey,
+            padding: EdgeInsets.zero,
+            shrinkWrap: true,
+            physics: NeverScrollableScrollPhysics(),
+            initialItemCount:
+                widget.companies.length > 2 ? 2 : widget.companies.length,
+            itemBuilder: (context, index, animation) {
+              return _companyTile(context, widget.companies[index], animation);
+            },
+          ),
+          if (widget.companies.length > 2)
+            Theme(
+              data: ThemeData(
+                splashColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+              ),
+              child: ListTile(
+                minTileHeight: 0,
+                minVerticalPadding: 12.h,
+                contentPadding: EdgeInsets.symmetric(horizontal: 20.w),
+                trailing: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up_outlined
+                      : Icons.keyboard_arrow_down_outlined,
+                  color: context.colors.inverseSurface,
+                ),
+                onTap: () {
+                  ref.read(cardOpenProvider.notifier).update((state) => !state);
+                },
+              ),
+            ),
+        ],
+      ).pOnly(top: 12.h, bottom: 8.h),
+    );
+  }
+
+  _companyTile(BuildContext context, CompanyEntity company,
+      Animation<double> animation) {
+    return FadeTransition(
+      opacity: animation,
+      child: ListTile(
+        contentPadding: EdgeInsets.only(left: 20.w, right: 12.w),
+        leading: CircleAvatar(
+          backgroundColor: company.hexColor,
+          child: company.name[0].text
+              .titleLarge(context)
+              .color(context.colors.surface)
+              .make(),
+        ),
+        title: company.name.text.make(),
+        subtitle: company.description.text.maxLines(1).make(),
+      ),
+    );
+  }
+}
+
+final cardOpenProvider = StateProvider<bool>((ref) {
+  return false;
+});

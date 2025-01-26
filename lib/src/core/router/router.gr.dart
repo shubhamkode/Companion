@@ -121,6 +121,52 @@ class CompanyDetailsRouteArgs {
 }
 
 /// generated route for
+/// [CompanyToAgentView]
+class CompanyToAgentRoute extends PageRouteInfo<CompanyToAgentRouteArgs> {
+  CompanyToAgentRoute({
+    Key? key,
+    required String agentId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CompanyToAgentRoute.name,
+          args: CompanyToAgentRouteArgs(
+            key: key,
+            agentId: agentId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CompanyToAgentRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CompanyToAgentRouteArgs>();
+      return CompanyToAgentView(
+        key: args.key,
+        agentId: args.agentId,
+      );
+    },
+  );
+}
+
+class CompanyToAgentRouteArgs {
+  const CompanyToAgentRouteArgs({
+    this.key,
+    required this.agentId,
+  });
+
+  final Key? key;
+
+  final String agentId;
+
+  @override
+  String toString() {
+    return 'CompanyToAgentRouteArgs{key: $key, agentId: $agentId}';
+  }
+}
+
+/// generated route for
 /// [CompanyView]
 class CompanyRoute extends PageRouteInfo<void> {
   const CompanyRoute({List<PageRouteInfo>? children})

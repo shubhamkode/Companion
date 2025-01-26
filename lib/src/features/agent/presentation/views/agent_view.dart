@@ -19,9 +19,7 @@ class AgentsView extends ConsumerWidget {
         return VStack(
           [
             RefreshIndicator(
-              onRefresh: () async {
-                ref.invalidate(agentNotifierProvider);
-              },
+              onRefresh: () => ref.refresh(agentNotifierProvider.future),
               child: AgentsList(agents: agents),
             ).expand()
           ],

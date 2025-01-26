@@ -18,9 +18,7 @@ class CompanyView extends ConsumerWidget {
       whenData: (companies) {
         return VStack([
           RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(companyNotifierProvider);
-            },
+            onRefresh: () => ref.refresh(companyNotifierProvider.future),
             child: CompaniesList(
               companies: companies,
             ),

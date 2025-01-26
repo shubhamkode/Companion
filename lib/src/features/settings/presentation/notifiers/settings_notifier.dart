@@ -3,6 +3,8 @@ import 'package:companion/src/core/database/local_database.dart';
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/settings/domain/entity/settings_entity.dart';
 import 'package:faker/faker.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:velocity_x/velocity_x.dart';
 
@@ -20,6 +22,21 @@ class SettingsNotifier extends _$SettingsNotifier {
     final repo = ref.read(settingsRepositoryProvider);
     await repo.updateSettings(
       state.copyWith(isDarkModeEnabled: !state.isDarkModeEnabled),
+    );
+    ref.invalidateSelf();
+  }
+
+  Future<void> changeBackupPath() async {
+    final repo = ref.read(settingsRepositoryProvider);
+
+    final dir = await FilePicker.platform.getDirectoryPath(
+      dialogTitle: "Select new directory for Backup",
+    );
+    if (dir == null) {
+      return;
+    }
+    await repo.updateSettings(
+      state.copyWith(backupPath: p.join(dir, 'Companion')),
     );
     ref.invalidateSelf();
   }

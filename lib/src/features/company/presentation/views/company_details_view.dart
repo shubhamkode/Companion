@@ -33,9 +33,8 @@ class CompanyDetailsView extends StatelessWidget {
         final companyDetails = ref.watch(companyDetailsProvider(companyId));
 
         return RefreshIndicator(
-          onRefresh: () async {
-            ref.invalidate(companyDetailsProvider);
-          },
+          onRefresh: () =>
+              ref.refresh(companyDetailsProvider(companyId).future),
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: companyDetails.onData(
@@ -112,7 +111,11 @@ class CompanyDetailsView extends StatelessWidget {
         24.h.heightBox,
         company.name.text.headlineMedium(context).make(),
         2.h.heightBox,
-        company.description.text.bodyLarge(context).center.make(),
+        company.description.text
+            .bodyLarge(context)
+            .center
+            .make()
+            .pSymmetric(h: 4.w),
       ],
       crossAlignment: CrossAxisAlignment.center,
     ).centered();
@@ -169,6 +172,7 @@ final companyDetailsProvider =
 
   final relatedAgents = await database.managers.agentTable
       .filter((f) => f.id.isIn(relatedAgentIds))
+      .orderBy((o) => o.name.asc())
       .get();
 
   return CompanyDetailsEntity(
