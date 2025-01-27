@@ -1,4 +1,6 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:companion/src/core/router/router.dart';
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/core/utils/extensions.dart';
 import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
@@ -43,7 +45,12 @@ class CompanyDetailsView extends StatelessWidget {
                   [
                     _buildBasicDetails(context, details.company),
                     24.h.heightBox,
-                    _buildAgentsCard(context, agents: details.relatedAgents),
+                    FadeIn(
+                      child: _buildAgentsCard(
+                        context,
+                        agents: details.relatedAgents,
+                      ),
+                    ),
                     12.h.heightBox,
                     Divider(),
                     ListTile(
@@ -53,7 +60,11 @@ class CompanyDetailsView extends StatelessWidget {
                       leading: Icon(
                         Icons.edit_outlined,
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        context.pushRoute(
+                          CompanyEditRoute(company: details.company),
+                        );
+                      },
                       title: "Edit".text.make(),
                     ),
                     ListTile(
@@ -139,7 +150,7 @@ class CompanyDetailsView extends StatelessWidget {
               return AgentTile(
                 isHeroEnabled: false,
                 agent: agents[index],
-              );
+              ).pOnly(left: 8.w);
             },
           ),
         ],

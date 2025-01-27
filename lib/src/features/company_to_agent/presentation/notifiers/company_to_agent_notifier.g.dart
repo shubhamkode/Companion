@@ -7,7 +7,7 @@ part of 'company_to_agent_notifier.dart';
 // **************************************************************************
 
 String _$companyToAgentNotifierHash() =>
-    r'e78e96093862da2c94b586ac20118ec3f99dbd97';
+    r'9626f77af9e483ecb3b7fba057a64ef1253f10ba';
 
 /// Copied from Dart SDK
 class _SystemHash {

@@ -9,7 +9,6 @@ import 'package:velocity_x/velocity_x.dart';
 @RoutePage()
 class CompanyView extends ConsumerWidget {
   const CompanyView({super.key});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final companyProvider = ref.watch(companyNotifierProvider);

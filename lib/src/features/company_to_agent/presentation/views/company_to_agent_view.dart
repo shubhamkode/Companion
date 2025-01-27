@@ -62,7 +62,7 @@ class _CompanyToAgentViewState extends State<CompanyToAgentView> {
           borderType: VxTextFieldBorderType.roundLine,
           borderRadius: 8.r,
           hint: 'Search',
-        ).pSymmetric(h: 8.w, v: 8.h),
+        ).pSymmetric(h: 16.w, v: 8.h),
       ),
       actions: [
         IconButton(
@@ -102,9 +102,13 @@ class _CompanyToAgentViewState extends State<CompanyToAgentView> {
                       itemBuilder: (context, index) {
                         return CheckboxListTile(
                           title: filteredCompanies[index].name.text.make(),
+                          contentPadding:
+                              EdgeInsets.symmetric(horizontal: 16.w),
+                          controlAffinity: ListTileControlAffinity.leading,
                           subtitle:
                               filteredCompanies[index].description.text.make(),
-                          value: linkedCompanyIds.contains(filteredCompanies[index].id),
+                          value: linkedCompanyIds
+                              .contains(filteredCompanies[index].id),
                           onChanged: (val) async {
                             if (val == true) {
                               await ref

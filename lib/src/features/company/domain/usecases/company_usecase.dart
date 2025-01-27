@@ -31,3 +31,13 @@ class NewCompanyParams {
     required this.description,
   });
 }
+
+class UpdateCompanyParams {
+  final String id, name, description;
+
+  UpdateCompanyParams({
+    required this.id,
+    required this.name,
+    required this.description,
+  });
+}

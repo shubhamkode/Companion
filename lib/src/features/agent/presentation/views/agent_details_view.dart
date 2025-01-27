@@ -74,11 +74,12 @@ class AgentDetailsView extends ConsumerWidget {
                       ),
                     ),
                     4.h.heightBox,
-                    FadeIn(
-                      child: CompaniesCard(
-                        companies: details.linkedCompanies,
-                      ).wFull(context).pSymmetric(h: 8.w),
-                    ),
+                    if (details.linkedCompanies.isNotEmpty)
+                      FadeIn(
+                        child: CompaniesCard(
+                          companies: details.linkedCompanies,
+                        ).wFull(context).pSymmetric(h: 8.w),
+                      ),
                     12.h.heightBox,
                     Divider(),
                     ListTile(
@@ -280,9 +281,23 @@ class CompaniesCard extends ConsumerStatefulWidget {
 class _CompaniesCardState extends ConsumerState<CompaniesCard> {
   final GlobalKey<AnimatedListState> _companiesListKey =
       GlobalKey<AnimatedListState>();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((time) {
+      _companiesListKey.currentState!.insertAllItems(
+        0,
+        widget.companies.length > 2 ? 2 : widget.companies.length,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final isExpanded = ref.watch(cardOpenProvider);
+
+    // a function to
 
     ref.listen(cardOpenProvider, (prev, curr) {
       if (curr == true) {
@@ -319,8 +334,7 @@ class _CompaniesCardState extends ConsumerState<CompaniesCard> {
             padding: EdgeInsets.zero,
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
-            initialItemCount:
-                widget.companies.length > 2 ? 2 : widget.companies.length,
+            initialItemCount: 0,
             itemBuilder: (context, index, animation) {
               return _companyTile(context, widget.companies[index], animation);
             },

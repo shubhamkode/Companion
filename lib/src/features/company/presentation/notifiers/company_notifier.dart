@@ -3,6 +3,8 @@ import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/agent/presentation/views/agent_details_view.dart';
 import 'package:companion/src/features/company/domain/entity/company_entity.dart';
 import 'package:companion/src/features/company/domain/usecases/company_usecase.dart';
+import 'package:companion/src/features/company/presentation/views/company_details_view.dart';
+import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'company_notifier.g.dart';
@@ -33,5 +35,20 @@ class CompanyNotifier extends _$CompanyNotifier {
 
     //remove
     ref.invalidate(agentDetailsProvider);
+  }
+
+  Future<void> updateCompany(UpdateCompanyParams params) async {
+    await ref
+        .read(databaseProvider)
+        .managers
+        .companyTable
+        .filter((f) => f.id.equals(params.id))
+        .update(
+          (f) => f(
+            name: Value(params.name),
+            description: Value(params.description),
+          ),
+        );
+    ref.invalidate(companyDetailsProvider(params.id));
   }
 }

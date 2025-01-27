@@ -6,7 +6,7 @@ part of 'company_notifier.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$companyNotifierHash() => r'f661822c28b6e4de8b96968f5681fa7ec18098aa';
+String _$companyNotifierHash() => r'be8e0eef6c2ebb159eefe00f5d1b06337cfdc04e';
 
 /// See also [CompanyNotifier].
 @ProviderFor(CompanyNotifier)
