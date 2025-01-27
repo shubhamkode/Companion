@@ -302,14 +302,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.0"
-  disclosure:
-    dependency: "direct main"
-    description:
-      name: disclosure
-      sha256: a0f35d30c55132be857c3aaf72bfffcc7a8ef336862b1cd5a50092042b45adb9
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   drift:
     dependency: "direct main"
     description:
@@ -395,14 +387,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_form_builder:
-    dependency: "direct main"
-    description:
-      name: flutter_form_builder
-      sha256: "375da52998c72f80dec9187bd93afa7ab202b89d5d066699368ff96d39fd4876"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.7.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -507,21 +491,13 @@ packages:
     source: hosted
     version: "2.3.2"
   hive_ce:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: hive_ce
       sha256: f09558be773f3e6bfa242d2b52e31c3cf8ea4edeb2b26d3cf0121c33aff94ffb
       url: "https://pub.dev"
     source: hosted
     version: "2.8.0+3"
-  hive_ce_flutter:
-    dependency: "direct main"
-    description:
-      name: hive_ce_flutter
-      sha256: "74c1d5f10d803446b4e7913bb272137e2724ba8a56465444f9e7713aeb60a877"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   hive_ce_generator:
     dependency: "direct dev"
     description:
@@ -554,6 +530,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.1"
+  hugeicons:
+    dependency: "direct main"
+    description:
+      name: hugeicons
+      sha256: b5cf08183a75b7774ca6d601a2ef025ed26550e4fca9d956673ffda91e132411
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7"
   intl:
     dependency: transitive
     description:
@@ -579,7 +563,7 @@ packages:
     source: hosted
     version: "0.7.1"
   json_annotation:
-    dependency: "direct main"
+    dependency: transitive
     description:
       name: json_annotation
       sha256: "1ce844379ca14835a50d2f019a3099f419082cfdd231cd86a142af94dd5c6bb1"

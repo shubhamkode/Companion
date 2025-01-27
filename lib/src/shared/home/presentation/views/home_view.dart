@@ -1,8 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/router/router.dart';
-import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/settings/presentation/notifiers/settings_notifier.dart';
-import 'package:drift_db_viewer/drift_db_viewer.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -40,6 +38,7 @@ class _HomeViewState extends ConsumerState<HomeView> {
           body: child,
           bottomNavigationBar: _buildBottomNavBar(context),
           floatingActionButton: _buildFAB(context),
+          drawer: _buildDrawer(),
         );
       },
     );
@@ -47,10 +46,9 @@ class _HomeViewState extends ConsumerState<HomeView> {
 
   _buildAppBar() {
     return AppBar(
-      automaticallyImplyLeading: false,
       scrolledUnderElevation: 0,
       backgroundColor: context.colors.surface,
-      titleSpacing: 16.w,
+      titleSpacing: 0,
       title: "Companion".text.make(),
       actions: [
         if (kDebugMode)
@@ -62,25 +60,11 @@ class _HomeViewState extends ConsumerState<HomeView> {
           ),
         IconButton(
           onPressed: () {
-            // Todo:- Navigate to Search page
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => DriftDbViewer(
-                  ref.watch(databaseProvider),
-                ),
-              ),
-            );
+            context.pushRoute(SearchRoute());
           },
           icon: Icon(Icons.search_outlined),
         ),
-        IconButton(
-          onPressed: () {
-            //Todo:- Navigate to Profile Route
-            context.pushRoute(SettingsRoute());
-          },
-          icon: Icon(Icons.person_outline_outlined),
-        ),
-        8.w.widthBox
+        16.w.widthBox
       ],
     );
   }
@@ -121,6 +105,87 @@ class _HomeViewState extends ConsumerState<HomeView> {
       child: Icon(
         isAgentsView ? Icons.person_add_outlined : Icons.add_business_outlined,
       ),
+    );
+  }
+
+  _buildDrawer() {
+    return Drawer(
+      // backgroundColor: context.colors.primaryContainer,
+      child: SafeArea(
+        child: VStack(
+          [
+            "Companion".text.titleLarge(context).make().pOnly(left: 12.w),
+            16.h.heightBox,
+            VStack(
+              [
+                DrawerActionButton(
+                  icon: Icons.contacts_outlined,
+                  title: "Manage Contacts",
+                  isSelected: true,
+                ),
+                DrawerActionButton(
+                  icon: Icons.archive_outlined,
+                  title: "Manage Debtors",
+                ),
+                DrawerActionButton(
+                  icon: Icons.settings_outlined,
+                  title: "Settings",
+                  onTap: () {
+                    context.maybePop();
+                    context.router.push(
+                      SettingsRoute(),
+                    );
+                  },
+                ),
+              ],
+              spacing: 8.h,
+            ),
+          ],
+        ).pSymmetric(h: 6.w, v: 12.h),
+      ),
+    );
+  }
+}
+
+class DrawerActionButton extends StatelessWidget {
+  final String title;
+  final bool isSelected;
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  const DrawerActionButton({
+    super.key,
+    required this.icon,
+    required this.title,
+    this.isSelected = false,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      minTileHeight: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(25.r),
+      ),
+      selected: isSelected,
+      leading: Icon(icon),
+      selectedTileColor: context.colors.primary,
+      onTap: () {
+        if (onTap != null) {
+          onTap!();
+        }
+      },
+      selectedColor: context.colors.onPrimary,
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 2.h),
+      title: title.text
+          .titleSmall(context)
+          .color(
+            isSelected
+                ? context.colors.onPrimary
+                : context.colors.onPrimaryContainer,
+          )
+          .make(),
     );
   }
 }

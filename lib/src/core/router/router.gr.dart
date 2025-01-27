@@ -121,6 +121,52 @@ class CompanyDetailsRouteArgs {
 }
 
 /// generated route for
+/// [CompanyEditView]
+class CompanyEditRoute extends PageRouteInfo<CompanyEditRouteArgs> {
+  CompanyEditRoute({
+    Key? key,
+    required CompanyEntity company,
+    List<PageRouteInfo>? children,
+  }) : super(
+          CompanyEditRoute.name,
+          args: CompanyEditRouteArgs(
+            key: key,
+            company: company,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'CompanyEditRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<CompanyEditRouteArgs>();
+      return CompanyEditView(
+        key: args.key,
+        company: args.company,
+      );
+    },
+  );
+}
+
+class CompanyEditRouteArgs {
+  const CompanyEditRouteArgs({
+    this.key,
+    required this.company,
+  });
+
+  final Key? key;
+
+  final CompanyEntity company;
+
+  @override
+  String toString() {
+    return 'CompanyEditRouteArgs{key: $key, company: $company}';
+  }
+}
+
+/// generated route for
 /// [CompanyToAgentView]
 class CompanyToAgentRoute extends PageRouteInfo<CompanyToAgentRouteArgs> {
   CompanyToAgentRoute({
@@ -238,6 +284,25 @@ class NewCompanyRoute extends PageRouteInfo<void> {
     name,
     builder: (data) {
       return const NewCompanyView();
+    },
+  );
+}
+
+/// generated route for
+/// [SearchView]
+class SearchRoute extends PageRouteInfo<void> {
+  const SearchRoute({List<PageRouteInfo>? children})
+      : super(
+          SearchRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'SearchRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const SearchView();
     },
   );
 }

@@ -18,15 +18,10 @@ dependencies:
   flutter_screenutil: ^5.9.3
   cuid2: ^3.1.0
   url_launcher: ^6.3.1
-  disclosure: ^2.2.0
   file_picker: ^8.1.7
   permission_handler: ^11.3.1
-  hive_ce: ^2.8.0+3
-  hive_ce_flutter: ^2.2.0
   flutter_riverpod: ^2.6.1
   freezed_annotation: ^2.4.4
-  json_annotation: ^4.9.0
-  flutter_form_builder: ^9.7.0
   form_builder_validators: ^11.1.1
   confirm_dialog: ^1.0.4
   faker: ^2.2.0
@@ -37,6 +32,7 @@ dependencies:
   shared_preferences: ^2.3.5
   drift_db_viewer: ^2.1.0
   animate_do: ^3.3.4
+  hugeicons: ^0.0.7
 
 dev_dependencies:
   flutter_test:

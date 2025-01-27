@@ -2,11 +2,14 @@ import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/features/agent/presentation/views/agent_details_view.dart';
 import 'package:companion/src/features/agent/presentation/views/agent_view.dart';
 import 'package:companion/src/features/agent/presentation/views/new_agent_view/new_agent_view.dart';
+import 'package:companion/src/features/company/domain/entity/company_entity.dart';
+import 'package:companion/src/features/company/presentation/views/company_edit_view.dart';
 import 'package:companion/src/features/company/presentation/views/company_view.dart';
 import 'package:companion/src/features/company/presentation/views/new_company_view.dart';
 import 'package:companion/src/features/company_to_agent/presentation/views/company_to_agent_view.dart';
 import 'package:companion/src/features/settings/presentation/views/settings_view.dart';
 import 'package:companion/src/shared/home/presentation/views/home_view.dart';
+import 'package:companion/src/shared/home/presentation/views/search_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/company/presentation/views/company_details_view.dart';
@@ -52,6 +55,11 @@ class AppRouter extends RootStackRouter {
           fullscreenDialog: true,
         ),
         AutoRoute(
+          path: '/companies/edit',
+          page: CompanyEditRoute.page,
+          fullscreenDialog: true,
+        ),
+        AutoRoute(
           path: '/company-details',
           page: CompanyDetailsRoute.page,
         ),
@@ -63,6 +71,11 @@ class AppRouter extends RootStackRouter {
           path: '/company-to-agent',
           page: CompanyToAgentRoute.page,
           fullscreenDialog: true,
+        ),
+        AutoRoute(
+          path: '/search',
+          fullscreenDialog: true,
+          page: SearchRoute.page,
         ),
       ];
 }
