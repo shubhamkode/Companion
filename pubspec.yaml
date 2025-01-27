@@ -21,7 +21,6 @@ dependencies:
   file_picker: ^8.1.7
   permission_handler: ^11.3.1
   flutter_riverpod: ^2.6.1
-  freezed_annotation: ^2.4.4
   form_builder_validators: ^11.1.1
   confirm_dialog: ^1.0.4
   faker: ^2.2.0
@@ -43,9 +42,7 @@ dev_dependencies:
   custom_lint:
   riverpod_generator: ^2.6.3
   riverpod_lint: ^2.6.3
-  hive_ce_generator: ^1.8.1
   freezed: ^2.5.7
-  json_serializable: ^6.9.0
   drift_dev: ^2.23.1
 
 flutter:
