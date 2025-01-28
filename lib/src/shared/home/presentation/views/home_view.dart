@@ -191,6 +191,7 @@ class DrawerActionButton extends StatelessWidget {
       title: title.text
           .titleSmall(context)
           .semiBold
+          .size(14.sp)
           .color(
             isSelected
                 ? context.colors.onPrimary

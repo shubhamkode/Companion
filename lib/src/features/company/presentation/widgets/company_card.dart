@@ -34,7 +34,8 @@ class CompanyCard extends StatelessWidget {
                   .displayMedium(context)
                   .color(context.colors.onSurface.withAlpha(150))
                   .center
-                  .make(),
+                  .make()
+                  .pSymmetric(h: 4.w),
             ),
           ).p8(),
           ListTile(

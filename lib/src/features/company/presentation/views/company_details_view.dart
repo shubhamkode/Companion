@@ -183,7 +183,7 @@ final companyDetailsProvider =
 
   final relatedAgents = await database.managers.agentTable
       .filter((f) => f.id.isIn(relatedAgentIds))
-      .orderBy((o) => o.name.asc())
+      .orderBy((o) => o.created.desc())
       .get();
 
   return CompanyDetailsEntity(

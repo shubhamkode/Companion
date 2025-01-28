@@ -1,6 +1,4 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
-import 'dart:io';
-
 import 'package:companion/src/core/database/local_database.dart';
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/settings/domain/entity/settings_entity.dart';
@@ -8,7 +6,6 @@ import 'package:faker/faker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:sqflite/sqflite.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 part 'settings_notifier.g.dart';
@@ -24,7 +21,9 @@ class SettingsNotifier extends _$SettingsNotifier {
   Future<void> toggleTheme() async {
     final repo = ref.read(settingsRepositoryProvider);
     await repo.updateSettings(
-      state.copyWith(isDarkModeEnabled: !state.isDarkModeEnabled),
+      state.copyWith(
+        isDarkModeEnabled: !state.isDarkModeEnabled,
+      ),
     );
     ref.invalidateSelf();
   }
@@ -106,4 +105,3 @@ class SettingsNotifier extends _$SettingsNotifier {
     });
   }
 }
-
