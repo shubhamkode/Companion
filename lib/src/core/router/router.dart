@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
 import 'package:companion/src/features/agent/presentation/views/agent_details_view.dart';
+import 'package:companion/src/features/agent/presentation/views/agent_edit_view.dart';
 import 'package:companion/src/features/agent/presentation/views/agent_view.dart';
 import 'package:companion/src/features/agent/presentation/views/new_agent_view/new_agent_view.dart';
 import 'package:companion/src/features/company/domain/entity/company_entity.dart';
@@ -44,6 +46,11 @@ class AppRouter extends RootStackRouter {
           path: '/agents/new',
           fullscreenDialog: true,
           page: NewAgentRoute.page,
+        ),
+        AutoRoute(
+          path: "/agents/edit",
+          fullscreenDialog: true,
+          page: AgentEditRoute.page,
         ),
         AutoRoute(
           path: '/agent-details',

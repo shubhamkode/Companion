@@ -15,7 +15,11 @@ import 'package:companion/src/features/company_to_agent/domain/usecases/company_
 import 'package:companion/src/features/settings/data/data_sources/local/local_settings_datasource.dart';
 import 'package:companion/src/features/settings/data/repositories/settings_repository_impl.dart';
 import 'package:companion/src/features/settings/domain/repositories/settings_repository.dart';
+import 'package:drift/drift.dart';
+import 'package:drift_flutter/drift_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// [Router] provider
@@ -23,9 +27,22 @@ final appRouterProvider = Provider<AppRouter>((ref) {
   return AppRouter();
 });
 
+final connectionProvider = Provider<QueryExecutor>((ref) {
+  return driftDatabase(
+    name: 'companion',
+    native: DriftNativeOptions(databasePath: () async {
+      return p.join(
+        (await getApplicationDocumentsDirectory()).path,
+        'Companion.sqlite',
+      );
+    }),
+  );
+});
+
 /// [AppDatabase] Provider
 final databaseProvider = Provider<AppDatabase>((ref) {
-  return AppDatabase();
+  final connection = ref.watch(connectionProvider);
+  return AppDatabase(connection);
 });
 
 /// [SharedPreferences] Provider

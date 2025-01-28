@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
@@ -114,21 +115,30 @@ class _HomeViewState extends ConsumerState<HomeView> {
       child: SafeArea(
         child: VStack(
           [
-            "Companion".text.titleLarge(context).make().pOnly(left: 12.w),
+            DrawerHeader(
+              child: VStack(
+                [
+                  "Companion".text.titleLarge(context).make(),
+                  "v.0.1.0".text.bodySmall(context).make(),
+                ],
+                alignment: MainAxisAlignment.center,
+                crossAlignment: CrossAxisAlignment.center,
+              ).centered(),
+            ),
             16.h.heightBox,
             VStack(
               [
                 DrawerActionButton(
-                  icon: Icons.contacts_outlined,
-                  title: "Manage Contacts",
+                  icon: HugeIcons.strokeRoundedContact01,
+                  title: "Contacts",
                   isSelected: true,
                 ),
+                // DrawerActionButton(
+                //   icon: Icons.archive_outlined,
+                //   title: "Manage Debtors",
+                // ),
                 DrawerActionButton(
-                  icon: Icons.archive_outlined,
-                  title: "Manage Debtors",
-                ),
-                DrawerActionButton(
-                  icon: Icons.settings_outlined,
+                  icon: HugeIcons.strokeRoundedSettings02,
                   title: "Settings",
                   onTap: () {
                     context.maybePop();
@@ -177,9 +187,10 @@ class DrawerActionButton extends StatelessWidget {
         }
       },
       selectedColor: context.colors.onPrimary,
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 2.h),
+      contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
       title: title.text
           .titleSmall(context)
+          .semiBold
           .color(
             isSelected
                 ? context.colors.onPrimary

@@ -56,6 +56,52 @@ class AgentDetailsRouteArgs {
 }
 
 /// generated route for
+/// [AgentEditView]
+class AgentEditRoute extends PageRouteInfo<AgentEditRouteArgs> {
+  AgentEditRoute({
+    Key? key,
+    required AgentEntity agent,
+    List<PageRouteInfo>? children,
+  }) : super(
+          AgentEditRoute.name,
+          args: AgentEditRouteArgs(
+            key: key,
+            agent: agent,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'AgentEditRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<AgentEditRouteArgs>();
+      return AgentEditView(
+        key: args.key,
+        agent: args.agent,
+      );
+    },
+  );
+}
+
+class AgentEditRouteArgs {
+  const AgentEditRouteArgs({
+    this.key,
+    required this.agent,
+  });
+
+  final Key? key;
+
+  final AgentEntity agent;
+
+  @override
+  String toString() {
+    return 'AgentEditRouteArgs{key: $key, agent: $agent}';
+  }
+}
+
+/// generated route for
 /// [AgentsView]
 class AgentsRoute extends PageRouteInfo<void> {
   const AgentsRoute({List<PageRouteInfo>? children})

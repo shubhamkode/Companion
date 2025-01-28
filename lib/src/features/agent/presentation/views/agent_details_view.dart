@@ -106,7 +106,11 @@ class AgentDetailsView extends ConsumerWidget {
                       leading: Icon(
                         Icons.edit_outlined,
                       ),
-                      onTap: () {},
+                      onTap: () {
+                        context.pushRoute(AgentEditRoute(
+                          agent: details.agent,
+                        ));
+                      },
                       title: "Edit".text.make(),
                     ),
                     ListTile(

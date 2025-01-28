@@ -1,11 +1,19 @@
+import 'dart:io';
+
 import 'package:auto_route/auto_route.dart';
+import 'package:companion/src/core/database/local_database.dart';
+import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
+import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:path/path.dart' as p;
+import 'package:permission_handler/permission_handler.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
@@ -109,6 +117,16 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   label: "Import Data".text.make(),
                   onPressed: () async {
                     try {
+                      final backupDatabase = File(
+                        p.join(ref.read(settingsNotifierProvider).backupPath,
+                            'Companion.sqlite'),
+                      );
+
+                      await importData(
+                        backupDatabase,
+                        ref,
+                      );
+
                       context
                         ..mounted
                         ..showToast(
@@ -136,40 +154,37 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   },
                 ).expand(),
                 ActionButton(
-                        icon: Icons.share_outlined,
-                        label: "Export Data".text.make(),
-                        onPressed: () async {
-                          // try {
-                          //   if (await ref
-                          //       .read(settingsPodProvider.notifier)
-                          //       .createSQLBackup()) {
-                          //     context
-                          //       ..mounted
-                          //       ..showToast(
-                          //         msg: "Backup Success",
-                          //         bgColor: Theme.of(context..mounted)
-                          //             .colorScheme
-                          //             .primaryContainer,
-                          //         textColor: Theme.of(context..mounted)
-                          //             .colorScheme
-                          //             .onPrimaryContainer,
-                          //       );
-                          //   }
-                          // } catch (e) {
-                          //   context
-                          //     ..mounted
-                          //     ..showToast(
-                          //       msg: e.toString(),
-                          //       bgColor: Theme.of(context..mounted)
-                          //           .colorScheme
-                          //           .errorContainer,
-                          //       textColor: Theme.of(context..mounted)
-                          //           .colorScheme
-                          //           .onErrorContainer,
-                          //     );
-                          // }
-                        })
-                    .expand(),
+                    icon: Icons.share_outlined,
+                    label: "Export Data".text.make(),
+                    onPressed: () async {
+                      final database = ref.read(databaseProvider);
+
+                      final backupDir = Directory(
+                          ref.read(settingsNotifierProvider).backupPath)
+                        ..createSync(
+                          recursive: true,
+                        );
+
+                      final backupFile =
+                          File(p.join(backupDir.path, 'Companion.sqlite'));
+
+                      if (await Permission.manageExternalStorage
+                          .request()
+                          .isGranted) {
+                        if (backupFile.existsSync()) {
+                          backupFile.deleteSync();
+                        }
+                        await database.customStatement(
+                            "VACUUM INTO ?", [backupFile.path]);
+                      }
+                      if (mounted) {
+                        context.showToast(
+                          msg: 'Backup Success',
+                          bgColor: context.colors.primary,
+                          textColor: context.colors.onPrimary,
+                        );
+                      }
+                    }).expand(),
               ],
               spacing: 8.w,
             ),
@@ -232,4 +247,108 @@ class ActionButton extends StatelessWidget {
       label: label,
     );
   }
+}
+
+Future<void> importData(File backupDb, WidgetRef ref) async {
+  if (!backupDb.existsSync()) {
+    throw Exception("Database doesn't exist");
+  }
+
+  final backup = await openDatabase(
+    backupDb.path,
+    singleInstance: true,
+    onOpen: (db) async {
+      await db.rawQuery("PRAGMA journal_mode=memory");
+    },
+  );
+
+  if (!backup.isOpen) {
+    throw Exception("Unable to open Database");
+  }
+
+  final database = ref.read(databaseProvider);
+
+  final existingAgentIds =
+      (await database.managers.agentTable.get()).builder((b) => b.id);
+  final existingCompanyIds =
+      (await database.managers.companyTable.get()).builder((b) => b.id);
+
+  final toBackupCompanyToAgents = await backup.query(
+    'company_to_agent_table',
+    where:
+        "agent_id NOT IN (${List.filled(existingAgentIds.length, '?').join(',')})",
+    whereArgs: existingAgentIds,
+  );
+
+  final toBackupAgents = await backup.query(
+    'agent_table',
+    where: "id NOT IN (${List.filled(existingAgentIds.length, '?').join(',')})",
+    whereArgs: existingAgentIds,
+  );
+
+  final toBackupCompanies = await backup.query(
+    'company_table',
+    where:
+        "id NOT IN (${List.filled(existingCompanyIds.length, '?').join(',')})",
+    whereArgs: existingCompanyIds,
+  );
+
+  await database.batch((batch) {
+    batch.insertAll(
+      database.agentTable,
+      List.generate(
+        toBackupAgents.length,
+        (index) {
+          final Map<String, dynamic> agent = toBackupAgents[index];
+
+          return AgentTableCompanion.insert(
+            id: Value(agent['id']),
+            name: agent['name'],
+            organization: agent['organization'],
+            contacts: (agent['contacts'].split(',') as List<String>)
+                .builder((b) => b.replaceAll(RegExp(r'\"'), '')),
+            hexColor: Value(agent['hex_color']),
+            created:
+                Value(DateTime.fromMicrosecondsSinceEpoch(agent['created'])),
+          );
+        },
+      ),
+    );
+
+    batch.insertAll(
+      database.companyTable,
+      List.generate(
+        toBackupCompanies.length,
+        (index) {
+          final Map<String, dynamic> company = toBackupCompanies[index];
+
+          return CompanyTableCompanion.insert(
+            id: Value(company['id']),
+            name: company['name'],
+            description: company['name'],
+            hexColor: Value(company['hex_color']),
+            created:
+                Value(DateTime.fromMicrosecondsSinceEpoch(company['created'])),
+          );
+        },
+      ),
+    );
+    batch.insertAll(
+      database.companyToAgentTable,
+      List.generate(
+        toBackupCompanyToAgents.length,
+        (index) {
+          final Map<String, dynamic> companyToAgent =
+              toBackupCompanyToAgents[index];
+
+          return CompanyToAgentTableCompanion.insert(
+            agentId: companyToAgent['agent_id'],
+            companyId: companyToAgent['company_id'],
+          );
+        },
+      ),
+    );
+  });
+  await backup.close();
+  ref.invalidate(databaseProvider);
 }

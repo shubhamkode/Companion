@@ -1,4 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
+import 'dart:io';
+
 import 'package:companion/src/core/database/local_database.dart';
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/settings/domain/entity/settings_entity.dart';
@@ -6,6 +8,7 @@ import 'package:faker/faker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:velocity_x/velocity_x.dart';
 
 part 'settings_notifier.g.dart';
@@ -67,16 +70,6 @@ class SettingsNotifier extends _$SettingsNotifier {
       );
     });
 
-    // final dummyAgentIds = dummyAgents.builder((c) => c.id.toString());
-    // final dummyCompanyIds = dummyCompanies.builder((c) => c.id.toString());
-
-    // final dummyRelations = List.generate(10, (index) {
-    //   return CompanyToAgentTableCompanion.insert(
-    //     agentId: dummyAgentIds[index],
-    //     companyId: dummyCompanyIds[index],
-    //   );
-    // });
-
     await database.batch((batch) {
       batch.insertAll(
         database.agentTable,
@@ -113,3 +106,4 @@ class SettingsNotifier extends _$SettingsNotifier {
     });
   }
 }
+

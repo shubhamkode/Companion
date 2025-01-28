@@ -32,3 +32,17 @@ class NewAgentParams {
     required this.contacts,
   });
 }
+
+class UpdateAgentParams {
+  final String id;
+  final String? name;
+  final String? organization;
+  final List<String>? contacts;
+
+  UpdateAgentParams({
+    required this.id,
+    this.name,
+    this.organization,
+    this.contacts,
+  });
+}

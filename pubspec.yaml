@@ -32,6 +32,7 @@ dependencies:
   drift_db_viewer: ^2.1.0
   animate_do: ^3.3.4
   hugeicons: ^0.0.7
+  share_plus: ^10.1.4
 
 dev_dependencies:
   flutter_test:
