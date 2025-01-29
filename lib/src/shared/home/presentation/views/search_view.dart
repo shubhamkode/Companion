@@ -3,7 +3,9 @@ import 'dart:async';
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/router/router.dart';
 import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
+import 'package:companion/src/features/agent/presentation/notifiers/agent_id_provider.dart';
 import 'package:companion/src/features/agent/presentation/notifiers/agent_notifier.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_id_provider.dart';
 import 'package:companion/src/features/company/presentation/notifiers/company_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -154,15 +156,17 @@ class _SearchViewState extends ConsumerState<SearchView> {
                                 .make()
                                 .pSymmetric(h: 4.w),
                           ),
-                          // company.name.text.center.make().pSymmetric(h: 4.w),
                         ],
                         crossAlignment: CrossAxisAlignment.center,
                         alignment: MainAxisAlignment.center,
                       ),
                     ),
                   ).onTap(() {
+                    ref
+                        .read(companyIdProvider.notifier)
+                        .update((state) => company.id);
                     context.router.popAndPush(
-                      CompanyDetailsRoute(companyId: company.id),
+                      CompanyDetailsRoute(),
                     );
                   });
                 },
@@ -246,8 +250,11 @@ class _SearchViewState extends ConsumerState<SearchView> {
                       ),
                     ),
                   ).onTap(() {
+                    ref
+                        .read(agentIdProvider.notifier)
+                        .update((state) => agent.id);
                     context.router.popAndPush(
-                      AgentDetailsRoute(agentId: agent.id),
+                      AgentDetailsRoute(),
                     );
                   });
                 },

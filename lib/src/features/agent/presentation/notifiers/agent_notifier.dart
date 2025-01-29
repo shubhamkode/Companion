@@ -2,8 +2,7 @@
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
 import 'package:companion/src/features/agent/domain/usecases/agent_usecase.dart';
-import 'package:companion/src/features/agent/presentation/views/agent_details_view.dart';
-import 'package:companion/src/features/company/presentation/views/company_details_view.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_details_notifier.dart';
 import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -34,7 +33,7 @@ class AgentNotifier extends _$AgentNotifier {
         .filter((f) => f.agentId.id.equals(id))
         .delete();
     await ref.read(agentUseCaseProvider).deleteAgent(id);
-    ref.invalidate(companyDetailsProvider);
+    ref.invalidate(companyDetailsNotifierProvider);
   }
 
   updateAgent(UpdateAgentParams params) async {
@@ -52,7 +51,6 @@ class AgentNotifier extends _$AgentNotifier {
             contacts: Value.absentIfNull(params.contacts),
           ),
         );
-    ref.invalidate(agentDetailsProvider(params.id));
-    ref.invalidate(companyDetailsProvider);
+    ref.invalidate(companyDetailsNotifierProvider);
   }
 }

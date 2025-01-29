@@ -11,17 +11,10 @@ part of 'router.dart';
 
 /// generated route for
 /// [AgentDetailsView]
-class AgentDetailsRoute extends PageRouteInfo<AgentDetailsRouteArgs> {
-  AgentDetailsRoute({
-    Key? key,
-    required String agentId,
-    List<PageRouteInfo>? children,
-  }) : super(
+class AgentDetailsRoute extends PageRouteInfo<void> {
+  const AgentDetailsRoute({List<PageRouteInfo>? children})
+      : super(
           AgentDetailsRoute.name,
-          args: AgentDetailsRouteArgs(
-            key: key,
-            agentId: agentId,
-          ),
           initialChildren: children,
         );
 
@@ -30,29 +23,9 @@ class AgentDetailsRoute extends PageRouteInfo<AgentDetailsRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<AgentDetailsRouteArgs>();
-      return AgentDetailsView(
-        key: args.key,
-        agentId: args.agentId,
-      );
+      return const AgentDetailsView();
     },
   );
-}
-
-class AgentDetailsRouteArgs {
-  const AgentDetailsRouteArgs({
-    this.key,
-    required this.agentId,
-  });
-
-  final Key? key;
-
-  final String agentId;
-
-  @override
-  String toString() {
-    return 'AgentDetailsRouteArgs{key: $key, agentId: $agentId}';
-  }
 }
 
 /// generated route for
@@ -122,17 +95,10 @@ class AgentsRoute extends PageRouteInfo<void> {
 
 /// generated route for
 /// [CompanyDetailsView]
-class CompanyDetailsRoute extends PageRouteInfo<CompanyDetailsRouteArgs> {
-  CompanyDetailsRoute({
-    Key? key,
-    required String companyId,
-    List<PageRouteInfo>? children,
-  }) : super(
+class CompanyDetailsRoute extends PageRouteInfo<void> {
+  const CompanyDetailsRoute({List<PageRouteInfo>? children})
+      : super(
           CompanyDetailsRoute.name,
-          args: CompanyDetailsRouteArgs(
-            key: key,
-            companyId: companyId,
-          ),
           initialChildren: children,
         );
 
@@ -141,29 +107,9 @@ class CompanyDetailsRoute extends PageRouteInfo<CompanyDetailsRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CompanyDetailsRouteArgs>();
-      return CompanyDetailsView(
-        key: args.key,
-        companyId: args.companyId,
-      );
+      return const CompanyDetailsView();
     },
   );
-}
-
-class CompanyDetailsRouteArgs {
-  const CompanyDetailsRouteArgs({
-    this.key,
-    required this.companyId,
-  });
-
-  final Key? key;
-
-  final String companyId;
-
-  @override
-  String toString() {
-    return 'CompanyDetailsRouteArgs{key: $key, companyId: $companyId}';
-  }
 }
 
 /// generated route for
@@ -214,17 +160,10 @@ class CompanyEditRouteArgs {
 
 /// generated route for
 /// [CompanyToAgentView]
-class CompanyToAgentRoute extends PageRouteInfo<CompanyToAgentRouteArgs> {
-  CompanyToAgentRoute({
-    Key? key,
-    required String agentId,
-    List<PageRouteInfo>? children,
-  }) : super(
+class CompanyToAgentRoute extends PageRouteInfo<void> {
+  const CompanyToAgentRoute({List<PageRouteInfo>? children})
+      : super(
           CompanyToAgentRoute.name,
-          args: CompanyToAgentRouteArgs(
-            key: key,
-            agentId: agentId,
-          ),
           initialChildren: children,
         );
 
@@ -233,29 +172,9 @@ class CompanyToAgentRoute extends PageRouteInfo<CompanyToAgentRouteArgs> {
   static PageInfo page = PageInfo(
     name,
     builder: (data) {
-      final args = data.argsAs<CompanyToAgentRouteArgs>();
-      return CompanyToAgentView(
-        key: args.key,
-        agentId: args.agentId,
-      );
+      return const CompanyToAgentView();
     },
   );
-}
-
-class CompanyToAgentRouteArgs {
-  const CompanyToAgentRouteArgs({
-    this.key,
-    required this.agentId,
-  });
-
-  final Key? key;
-
-  final String agentId;
-
-  @override
-  String toString() {
-    return 'CompanyToAgentRouteArgs{key: $key, agentId: $agentId}';
-  }
 }
 
 /// generated route for

@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:companion/src/core/database/local_database.dart';
 import 'package:companion/src/core/services/service_locator.dart';
-import 'package:companion/src/features/agent/presentation/views/agent_details_view.dart';
-import 'package:companion/src/features/company/presentation/views/company_details_view.dart';
+import 'package:companion/src/features/agent/presentation/notifiers/agent_details_notifier.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_details_notifier.dart';
 import 'package:companion/src/features/settings/presentation/notifiers/settings_notifier.dart';
 import 'package:companion/src/features/settings/presentation/widgets/settings_button.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
@@ -266,7 +266,7 @@ class BackupAndRestoreSection extends ConsumerWidget {
       },
     );
     await backupDB.close();
-    ref.invalidate(agentDetailsProvider);
-    ref.invalidate(companyDetailsProvider);
+    ref.invalidate(agentDetailsNotifierProvider);
+    ref.invalidate(companyDetailsNotifierProvider);
   }
 }

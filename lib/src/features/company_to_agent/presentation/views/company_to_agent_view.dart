@@ -12,11 +12,8 @@ import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
 class CompanyToAgentView extends StatefulWidget {
-  final String agentId;
-
   const CompanyToAgentView({
     super.key,
-    required this.agentId,
   });
 
   @override
@@ -89,9 +86,7 @@ class _CompanyToAgentViewState extends State<CompanyToAgentView> {
                         c.name.toLowerCase().contains(_searchStr.toLowerCase()))
                     .toList();
 
-                return ref
-                    .watch(companyToAgentNotifierProvider(widget.agentId))
-                    .onData(
+                return ref.watch(companyToAgentNotifierProvider).onData(
                   whenData: (companyToAgents) {
                     final linkedCompanyIds =
                         companyToAgents.builder((cToA) => cToA.companyId);
@@ -112,17 +107,13 @@ class _CompanyToAgentViewState extends State<CompanyToAgentView> {
                           onChanged: (val) async {
                             if (val == true) {
                               await ref
-                                  .read(companyToAgentNotifierProvider(
-                                          widget.agentId)
-                                      .notifier)
+                                  .read(companyToAgentNotifierProvider.notifier)
                                   .addRelation(
                                     filteredCompanies[index].id,
                                   );
                             } else {
                               await ref
-                                  .read(companyToAgentNotifierProvider(
-                                          widget.agentId)
-                                      .notifier)
+                                  .read(companyToAgentNotifierProvider.notifier)
                                   .removeRelation(
                                     filteredCompanies[index].id,
                                   );

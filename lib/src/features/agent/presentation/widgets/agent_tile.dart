@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/router/router.dart';
 import 'package:companion/src/core/utils/make_call.dart';
 import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
+import 'package:companion/src/features/agent/presentation/notifiers/agent_id_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -27,11 +28,11 @@ class AgentTile extends ConsumerWidget {
               .color(context.colors.surface)
               .make(),
         ).onTap(() {
-          context.pushRoute(AgentDetailsRoute(agentId: agent.id));
+          _navigateToAgentDetailsPage(context, ref);
         }).hero('Agent-${agent.id}'),
       ),
       title: agent.name.text.make().onTap(() {
-        context.pushRoute(AgentDetailsRoute(agentId: agent.id));
+        _navigateToAgentDetailsPage(context, ref);
       }),
       subtitle: agent.organization.text.make(),
       trailing: IconButton(
@@ -40,6 +41,13 @@ class AgentTile extends ConsumerWidget {
         },
         icon: Icon(Icons.call_outlined),
       ),
+    );
+  }
+
+  _navigateToAgentDetailsPage(BuildContext context, WidgetRef ref) {
+    ref.read(agentIdProvider.notifier).update((state) => agent.id);
+    context.pushRoute(
+      AgentDetailsRoute(),
     );
   }
 }

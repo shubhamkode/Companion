@@ -1,6 +1,6 @@
 // ignore_for_file: avoid_manual_providers_as_generated_provider_dependency
 import 'package:companion/src/core/services/service_locator.dart';
-import 'package:companion/src/features/agent/presentation/views/agent_details_view.dart';
+import 'package:companion/src/features/agent/presentation/notifiers/agent_details_notifier.dart';
 import 'package:companion/src/features/company/domain/entity/company_entity.dart';
 import 'package:companion/src/features/company/domain/usecases/company_usecase.dart';
 import 'package:companion/src/features/company/presentation/views/company_details_view.dart';
@@ -34,7 +34,7 @@ class CompanyNotifier extends _$CompanyNotifier {
     await ref.read(companyUseCaseProvider).deleteCompany(id);
 
     //remove
-    ref.invalidate(agentDetailsProvider);
+    ref.invalidate(agentDetailsNotifierProvider);
   }
 
   Future<void> updateCompany(UpdateCompanyParams params) async {
@@ -49,6 +49,6 @@ class CompanyNotifier extends _$CompanyNotifier {
             description: Value(params.description),
           ),
         );
-    ref.invalidate(companyDetailsProvider(params.id));
+    // ref.invalidate(companyDetailsProvider(params.id));
   }
 }

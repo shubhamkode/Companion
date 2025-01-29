@@ -1,11 +1,13 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/router/router.dart';
 import 'package:companion/src/features/company/domain/entity/company_entity.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_id_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:velocity_x/velocity_x.dart';
 
-class CompanyCard extends StatelessWidget {
+class CompanyCard extends ConsumerWidget {
   final CompanyEntity company;
   const CompanyCard({
     super.key,
@@ -13,7 +15,7 @@ class CompanyCard extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       elevation: 0,
       shape: RoundedRectangleBorder(
@@ -48,15 +50,21 @@ class CompanyCard extends StatelessWidget {
                     .color(context.colors.surface)
                     .make(),
               ).onTap(() {
+                ref
+                    .read(companyIdProvider.notifier)
+                    .update((state) => company.id);
                 context.pushRoute(
-                  CompanyDetailsRoute(companyId: company.id),
+                  CompanyDetailsRoute(),
                 );
               }),
             ),
             title: company.name.text.maxLines(1).semiBold.make().onTap(
               () {
+                ref
+                    .read(companyIdProvider.notifier)
+                    .update((state) => company.id);
                 context.pushRoute(
-                  CompanyDetailsRoute(companyId: company.id),
+                  CompanyDetailsRoute(),
                 );
               },
             ),
@@ -68,24 +76,3 @@ class CompanyCard extends StatelessWidget {
     );
   }
 }
-
-// import 'package:auto_route/auto_route.dart';
-// import 'package:companion/src/core/routes/router.dart';
-// import 'package:companion/src/features/companies/models/company_model.dart';
-// import 'package:companion/src/utils/color_ext.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:flutter_screenutil/flutter_screenutil.dart';
-// import 'package:velocity_x/velocity_x.dart';
-
-// class CompanyCard extends ConsumerWidget {
-//   final CompanyModel company;
-//   const CompanyCard({
-//     super.key,
-//     required this.company,
-//   });
-
-//   @override
-//   Widget build(BuildContext context, WidgetRef ref) {
-//   }
-// }

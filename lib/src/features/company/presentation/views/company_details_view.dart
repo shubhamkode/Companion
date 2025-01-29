@@ -1,11 +1,12 @@
 import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/router/router.dart';
-import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/core/utils/extensions.dart';
 import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
 import 'package:companion/src/features/agent/presentation/widgets/agent_tile.dart';
 import 'package:companion/src/features/company/domain/entity/company_entity.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_details_notifier.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_id_provider.dart';
 import 'package:companion/src/features/company/presentation/notifiers/company_notifier.dart';
 import 'package:confirm_dialog/confirm_dialog.dart';
 import 'package:flutter/material.dart';
@@ -15,10 +16,8 @@ import 'package:velocity_x/velocity_x.dart';
 
 @RoutePage()
 class CompanyDetailsView extends StatelessWidget {
-  final String companyId;
   const CompanyDetailsView({
     super.key,
-    required this.companyId,
   });
 
   @override
@@ -32,11 +31,10 @@ class CompanyDetailsView extends StatelessWidget {
   _buildBody(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final companyDetails = ref.watch(companyDetailsProvider(companyId));
+        final companyDetails = ref.watch(companyDetailsNotifierProvider);
 
         return RefreshIndicator(
-          onRefresh: () =>
-              ref.refresh(companyDetailsProvider(companyId).future),
+          onRefresh: () => ref.refresh(companyDetailsNotifierProvider.future),
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: companyDetails.onData(
@@ -84,7 +82,7 @@ class CompanyDetailsView extends StatelessWidget {
                         )) {
                           await ref
                               .read(companyNotifierProvider.notifier)
-                              .deleteCompany(companyId);
+                              .deleteCompany(ref.read(companyIdProvider));
                           if (context.mounted) {
                             context.maybePop();
                           }
@@ -158,36 +156,3 @@ class CompanyDetailsView extends StatelessWidget {
     ).wFull(context).pSymmetric(h: 8.w);
   }
 }
-
-class CompanyDetailsEntity {
-  final CompanyEntity company;
-  final List<AgentEntity> relatedAgents;
-
-  CompanyDetailsEntity({
-    required this.company,
-    required this.relatedAgents,
-  });
-}
-
-final companyDetailsProvider =
-    FutureProvider.family<CompanyDetailsEntity, String>((ref, companyId) async {
-  final database = ref.watch(databaseProvider);
-  final company = await database.managers.companyTable
-      .filter((f) => f.id.equals(companyId))
-      .getSingle();
-
-  final relatedAgentIds = (await database.managers.companyToAgentTable
-          .filter((f) => f.companyId.id.equals(companyId))
-          .get())
-      .builder((m) => m.agentId);
-
-  final relatedAgents = await database.managers.agentTable
-      .filter((f) => f.id.isIn(relatedAgentIds))
-      .orderBy((o) => o.created.desc())
-      .get();
-
-  return CompanyDetailsEntity(
-    company: CompanyEntity.fromModel(company),
-    relatedAgents: relatedAgents.builder(AgentEntity.fromModel),
-  );
-});

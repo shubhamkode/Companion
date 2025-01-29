@@ -33,6 +33,7 @@ dependencies:
   animate_do: ^3.3.4
   hugeicons: ^0.0.7
   share_plus: ^10.1.4
+  animated_list_plus: ^0.5.2
 
 dev_dependencies:
   flutter_test:
