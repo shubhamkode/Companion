@@ -41,6 +41,10 @@ class _AgentCompaniesCardState extends ConsumerState<AgentCompaniesCard> {
         );
       },
       data: (linkedCompanies) {
+        // return _buildCard(
+        //   context,
+        //   child: _buildLoading(context),
+        // );
         if (linkedCompanies.isEmpty) {
           return SizedBox.shrink();
         }
@@ -114,6 +118,7 @@ class _AgentCompaniesCardState extends ConsumerState<AgentCompaniesCard> {
   ) {
     return ListTile(
       contentPadding: EdgeInsets.only(left: 20.w, right: 12.w),
+      minTileHeight: 0,
       leading: CircleAvatar(
         backgroundColor: company.hexColor,
         child: company.name[0].text
@@ -123,7 +128,7 @@ class _AgentCompaniesCardState extends ConsumerState<AgentCompaniesCard> {
       ),
       title: company.name.text.make(),
       subtitle: company.description.text.maxLines(1).make(),
-    );
+    ).pSymmetric(v: 2.h);
   }
 
   Widget _buildLoading(
@@ -132,20 +137,22 @@ class _AgentCompaniesCardState extends ConsumerState<AgentCompaniesCard> {
     return ListView.builder(
       itemCount: 2,
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: NeverScrollableScrollPhysics(),
       itemBuilder: (context, index) {
         return ListTile(
+          minTileHeight: 0,
           contentPadding: EdgeInsets.only(left: 20.w, right: 12.w),
           leading: CircleAvatar().shimmer(),
           title: VxSkeleton(
             height: 12.h,
             borderRadius: BorderRadius.circular(8.r),
-          ).shimmer().pOnly(right: 8.w),
+          ).shimmer().pOnly(right: 8.w, bottom: 4.h),
           subtitle: VxSkeleton(
-            height: 4.h,
+            height: 8.h,
             borderRadius: BorderRadius.circular(8.r),
-          ).shimmer().pOnly(right: 16.w, left: 8.w),
-        );
+          ).shimmer().pOnly(right: 24.w, left: 4.w),
+        ).pSymmetric(v: 2.h);
       },
     );
   }
@@ -165,6 +172,6 @@ class _AgentCompaniesCardState extends ConsumerState<AgentCompaniesCard> {
         top: 12.h,
         bottom: 8.h,
       ),
-    );
+    ).wFull(context).pSymmetric(h: 8.w);
   }
 }

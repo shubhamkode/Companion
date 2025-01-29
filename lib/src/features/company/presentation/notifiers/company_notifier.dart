@@ -3,7 +3,8 @@ import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/agent/presentation/notifiers/agent_details_notifier.dart';
 import 'package:companion/src/features/company/domain/entity/company_entity.dart';
 import 'package:companion/src/features/company/domain/usecases/company_usecase.dart';
-import 'package:companion/src/features/company/presentation/views/company_details_view.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_details_notifier.dart';
+import 'package:companion/src/features/company/presentation/notifiers/company_id_provider.dart';
 import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -24,16 +25,16 @@ class CompanyNotifier extends _$CompanyNotifier {
     return ref.read(companyUseCaseProvider).newCompany(params);
   }
 
-  Future<void> deleteCompany(String id) async {
+  Future<void> deleteCompany() async {
+    final companyId = ref.watch(companyIdProvider);
     await ref
         .read(databaseProvider)
         .managers
         .companyToAgentTable
-        .filter((f) => f.companyId.id.equals(id))
+        .filter((f) => f.companyId.id.equals(companyId))
         .delete();
-    await ref.read(companyUseCaseProvider).deleteCompany(id);
+    await ref.read(companyUseCaseProvider).deleteCompany(companyId);
 
-    //remove
     ref.invalidate(agentDetailsNotifierProvider);
   }
 
@@ -49,6 +50,8 @@ class CompanyNotifier extends _$CompanyNotifier {
             description: Value(params.description),
           ),
         );
-    // ref.invalidate(companyDetailsProvider(params.id));
+
+    ref.invalidate(companyDetailsNotifierProvider);
+    ref.invalidate(agentDetailsNotifierProvider);
   }
 }

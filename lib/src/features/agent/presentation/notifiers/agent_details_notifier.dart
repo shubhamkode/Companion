@@ -43,9 +43,3 @@ class AgentDetailsEntity {
     required this.linkedCompanies,
   });
 }
-
-// final agentDetailsProvider = FutureProvider.family<AgentDetailsEntity, String>(
-//   (ref, agentId) async {
-//     final database = ref.watch(databaseProvider);
-
-// );

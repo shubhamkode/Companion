@@ -32,15 +32,13 @@ class DrawerActionButton extends StatelessWidget {
         }
       },
       selectedColor: context.colors.onPrimary,
-      contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 5.h),
+      contentPadding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 3.8.h),
       title: title.text
           .titleSmall(context)
           .semiBold
           .size(14.sp)
           .color(
-            isSelected
-                ? context.colors.onPrimary
-                : context.colors.onPrimaryContainer,
+            isSelected ? context.colors.onPrimary : context.colors.onSurface,
           )
           .make(),
     );

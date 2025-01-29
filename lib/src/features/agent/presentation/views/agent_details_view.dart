@@ -1,11 +1,7 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:companion/src/core/router/router.dart';
-import 'package:companion/src/core/utils/extensions.dart';
 import 'package:companion/src/core/utils/make_call.dart';
-import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
 import 'package:companion/src/features/agent/presentation/notifiers/agent_details_notifier.dart';
-import 'package:companion/src/features/agent/presentation/notifiers/agent_id_provider.dart';
 import 'package:companion/src/features/agent/presentation/notifiers/agent_notifier.dart';
 import 'package:companion/src/features/agent/presentation/widgets/agent_details_view/agent_companies_card.dart';
 import 'package:companion/src/features/agent/presentation/widgets/agent_details_view/agent_contacts_card.dart';
@@ -24,18 +20,9 @@ class AgentDetailsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (didPop, result) {
-        if (didPop) {
-          ref.read(cardOpenProvider.notifier).update((state) => false);
-          ref.read(agentIdProvider.notifier).update((state) => "");
-        }
-      },
-      child: Scaffold(
-        appBar: _buildAppBar(context),
-        body: _buildBody(context),
-      ),
+    return Scaffold(
+      appBar: _buildAppBar(context),
+      body: _buildBody(context),
     );
   }
 
@@ -48,89 +35,84 @@ class AgentDetailsView extends ConsumerWidget {
 
   _buildBody(BuildContext context) {
     return Consumer(
-      builder: (context, ref, _) {
-        final agentDetails = ref.watch(agentDetailsNotifierProvider);
+      builder: (context, ref, child) {
+        // final agentDetails = ref.watch(agentDetailsNotifierProvider);
         return RefreshIndicator(
           onRefresh: () => ref.refresh(agentDetailsNotifierProvider.future),
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: agentDetails.onData(
-              whenData: (details) {
-                return VStack(
-                  [
-                    AgentDetailSection(
-                      agent: details.agent,
-                    ),
-                    FadeIn(
-                      child: _buildPrimaryActions(
-                        context,
-                        primaryContact: details.agent.contacts[0],
-                      ),
-                    ),
-                    VStack(
-                      [
-                        FadeIn(
-                          child: AgentContactsCard(
-                            contacts: details.agent.contacts,
-                          ),
-                        ),
-                        if (details.linkedCompanies.isNotEmpty)
-                          FadeIn(
-                            child: AgentCompaniesCard()
-                                .wFull(context)
-                                .pSymmetric(h: 8.w),
-                          ),
-                      ],
-                      spacing: 4.h,
-                    ),
-                    Divider(),
-                    _buildActions(
-                      agent: details.agent,
-                    ),
-                    Divider(),
-                  ],
-                  spacing: 12.h,
-                ).pOnly(top: 12.h, bottom: 40.h);
-              },
-            ),
-          ),
+          child: child!,
         );
       },
+      child: SingleChildScrollView(
+        child: VStack(
+          [
+            AgentDetailSection(),
+            _buildPrimaryActions(),
+            VStack(
+              [
+                AgentContactsCard(),
+                AgentCompaniesCard(),
+              ],
+              spacing: 4.h,
+            ),
+            VStack(
+              [
+                Divider(),
+                _buildActions(),
+                Divider(),
+              ],
+              spacing: 4.h,
+            )
+          ],
+          spacing: 12.h,
+        ).pOnly(
+          top: 12.h,
+          bottom: 40.h,
+        ),
+      ),
     );
   }
 
-  _buildPrimaryActions(
-    BuildContext context, {
-    required String primaryContact,
-  }) {
-    return HStack(
-      [
-        VStack(
-          [
-            IconButton.filledTonal(
-              onPressed: () async {
-                await makeCallTo(primaryContact);
-              },
-              icon: Icon(Icons.call_outlined),
-              iconSize: 18.sp,
-            ),
-            "Call".text.labelSmall(context).semiBold.make(),
-          ],
-          crossAlignment: CrossAxisAlignment.center,
-        )
-      ],
-      spacing: 30.w,
-      axisSize: MainAxisSize.max,
-      alignment: MainAxisAlignment.center,
-      // spacing: 40.w,
-    ).wFull(context);
+  _buildPrimaryActions() {
+    return Consumer(builder: (context, ref, child) {
+      final Future<String> primaryContact = ref.watch(
+        agentDetailsNotifierProvider.selectAsync(
+          (s) => s.agent.contacts[0],
+        ),
+      );
+
+      return HStack(
+        [
+          VStack(
+            [
+              IconButton.filledTonal(
+                onPressed: () async {
+                  await makeCallTo(await primaryContact);
+                },
+                icon: Icon(Icons.call_outlined),
+                iconSize: 18.sp,
+              ),
+              "Call".text.labelSmall(context).semiBold.make(),
+            ],
+            crossAlignment: CrossAxisAlignment.center,
+          )
+        ],
+        spacing: 30.w,
+        axisSize: MainAxisSize.max,
+        alignment: MainAxisAlignment.center,
+        // spacing: 40.w,
+      ).wFull(context);
+    });
   }
 
-  Widget _buildActions({
-    required AgentEntity agent,
-  }) {
+  Widget _buildActions() {
     return Consumer(
       builder: (context, ref, child) {
+        final agentProvider = ref.watch(
+          agentDetailsNotifierProvider.selectAsync(
+            (s) => s.agent,
+          ),
+        );
+
         return VStack(
           [
             ListTile(
@@ -154,10 +136,10 @@ class AgentDetailsView extends ConsumerWidget {
               leading: Icon(
                 Icons.edit_outlined,
               ),
-              onTap: () {
+              onTap: () async {
                 context.pushRoute(
                   AgentEditRoute(
-                    agent: agent,
+                    agent: await agentProvider,
                   ),
                 );
               },
@@ -177,9 +159,7 @@ class AgentDetailsView extends ConsumerWidget {
                   title: Text("Delete Contact").wFull(context),
                   content: Text("Selected contact will be deleted forever.."),
                 )) {
-                  await ref
-                      .read(agentNotifierProvider.notifier)
-                      .deleteAgent(ref.read(agentIdProvider));
+                  await ref.read(agentNotifierProvider.notifier).deleteAgent();
                   if (context.mounted) {
                     context.maybePop();
                   }
@@ -193,7 +173,3 @@ class AgentDetailsView extends ConsumerWidget {
     );
   }
 }
-
-final cardOpenProvider = StateProvider<bool>((ref) {
-  return false;
-});

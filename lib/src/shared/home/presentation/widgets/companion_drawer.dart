@@ -52,7 +52,7 @@ class CompanionDrawer extends StatelessWidget {
               spacing: 8.h,
             ),
           ],
-        ).pSymmetric(h: 6.w, v: 12.h),
+        ).pSymmetric(h: 8.w, v: 12.h),
       ),
     );
   }

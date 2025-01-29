@@ -2,6 +2,8 @@
 import 'package:companion/src/core/services/service_locator.dart';
 import 'package:companion/src/features/agent/domain/entity/agent_entity.dart';
 import 'package:companion/src/features/agent/domain/usecases/agent_usecase.dart';
+import 'package:companion/src/features/agent/presentation/notifiers/agent_details_notifier.dart';
+import 'package:companion/src/features/agent/presentation/notifiers/agent_id_provider.dart';
 import 'package:companion/src/features/company/presentation/notifiers/company_details_notifier.dart';
 import 'package:drift/drift.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -25,14 +27,15 @@ class AgentNotifier extends _$AgentNotifier {
     return ref.read(agentUseCaseProvider).createNewAgent(params);
   }
 
-  Future<void> deleteAgent(String id) async {
+  Future<void> deleteAgent() async {
+    final agentId = ref.watch(agentIdProvider);
     await ref
         .read(databaseProvider)
         .managers
         .companyToAgentTable
-        .filter((f) => f.agentId.id.equals(id))
+        .filter((f) => f.agentId.id.equals(agentId))
         .delete();
-    await ref.read(agentUseCaseProvider).deleteAgent(id);
+    await ref.read(agentUseCaseProvider).deleteAgent(agentId);
     ref.invalidate(companyDetailsNotifierProvider);
   }
 
@@ -51,6 +54,7 @@ class AgentNotifier extends _$AgentNotifier {
             contacts: Value.absentIfNull(params.contacts),
           ),
         );
+    ref.invalidate(agentDetailsNotifierProvider);
     ref.invalidate(companyDetailsNotifierProvider);
   }
 }
