@@ -139,7 +139,7 @@ class CompanyBasicDetailsSection extends ConsumerWidget {
                 )
                 .hero('Company-${company.id}'),
             24.h.heightBox,
-            company.name.text.headlineMedium(context).make(),
+            company.name.text.center.headlineMedium(context).make(),
             2.h.heightBox,
             company.description.text
                 .bodyLarge(context)
