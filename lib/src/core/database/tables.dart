@@ -43,3 +43,43 @@ final contactsConvertor = TypeConverter.json<List<String>>(
   toJson: (col) => col.join(','),
   fromJson: (val) => (val as String).split(','),
 );
+
+enum PartyType {
+  customer,
+  supplier,
+}
+
+@DataClassName('PartyModel')
+class PartyTable extends Table with BaseTable {
+  TextColumn get name => text()();
+  TextColumn get contacts => text().map(contactsConvertor)();
+  TextColumn get email => text().nullable()();
+  TextColumn get address => text().nullable()();
+  TextColumn get city => text().nullable()();
+  TextColumn get state => text().nullable()();
+  TextColumn get country => text().nullable()();
+
+  TextColumn get type => textEnum<PartyType>()();
+}
+
+enum TransactionType {
+  paid,
+  received,
+}
+
+@DataClassName('TransactionModel')
+class TransactionTable extends Table {
+  TextColumn get id => text().clientDefault(uuid)();
+  DateTimeColumn get created =>
+      dateTime().clientDefault(() => DateTime.now())();
+
+  TextColumn get type => textEnum<TransactionType>()();
+
+  RealColumn get amount => real()();
+
+  TextColumn get description => text().nullable()();
+
+  @JsonKey('party_id')
+  TextColumn get partyId =>
+      text().named("party_id").references(PartyTable, #id)();
+}

@@ -1,26 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'agent_notifier.dart';
+part of 'hisab_kitab_notifier.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$agentNotifierHash() => r'e63a24b1dd8f0648e63d5d317423a99b3e112f12';
+String _$partyNotifierHash() => r'd3417ccedcca6baed94baa5d795b8a5fc848b407';
 
-/// See also [AgentNotifier].
-@ProviderFor(AgentNotifier)
-final agentNotifierProvider = AutoDisposeStreamNotifierProvider<AgentNotifier,
-    List<AgentEntity>>.internal(
-  AgentNotifier.new,
-  name: r'agentNotifierProvider',
+/// See also [PartyNotifier].
+@ProviderFor(PartyNotifier)
+final partyNotifierProvider = AutoDisposeStreamNotifierProvider<PartyNotifier,
+    List<PartyEntity>>.internal(
+  PartyNotifier.new,
+  name: r'partyNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$agentNotifierHash,
+      : _$partyNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$AgentNotifier = AutoDisposeStreamNotifier<List<AgentEntity>>;
+typedef _$PartyNotifier = AutoDisposeStreamNotifier<List<PartyEntity>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

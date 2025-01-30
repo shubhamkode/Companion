@@ -9,12 +9,14 @@ import 'package:companion/src/features/company/presentation/views/company_edit_v
 import 'package:companion/src/features/company/presentation/views/company_view.dart';
 import 'package:companion/src/features/company/presentation/views/new_company_view.dart';
 import 'package:companion/src/features/company_to_agent/presentation/views/company_to_agent_view.dart';
+import 'package:companion/src/features/hisab_kitab/presentation/views/party_details_view.dart';
 import 'package:companion/src/features/settings/presentation/views/settings_view.dart';
 import 'package:companion/src/shared/home/presentation/views/home_view.dart';
 import 'package:companion/src/shared/home/presentation/views/search_view.dart';
 import 'package:flutter/material.dart';
 
 import '../../features/company/presentation/views/company_details_view.dart';
+import '../../features/hisab_kitab/presentation/views/hisab_kitab_view.dart';
 
 part 'router.gr.dart';
 
@@ -83,6 +85,14 @@ class AppRouter extends RootStackRouter {
           path: '/search',
           fullscreenDialog: true,
           page: SearchRoute.page,
+        ),
+        AutoRoute(
+          path: '/hisab-kitab',
+          page: HisabKitabRoute.page,
+        ),
+        AutoRoute(
+          path: '/party-details',
+          page: PartyRoute.page,
         ),
       ];
 }

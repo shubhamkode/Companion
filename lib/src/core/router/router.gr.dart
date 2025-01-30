@@ -197,6 +197,25 @@ class CompanyRoute extends PageRouteInfo<void> {
 }
 
 /// generated route for
+/// [HisabKitabView]
+class HisabKitabRoute extends PageRouteInfo<void> {
+  const HisabKitabRoute({List<PageRouteInfo>? children})
+      : super(
+          HisabKitabRoute.name,
+          initialChildren: children,
+        );
+
+  static const String name = 'HisabKitabRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      return const HisabKitabView();
+    },
+  );
+}
+
+/// generated route for
 /// [HomeView]
 class HomeRoute extends PageRouteInfo<void> {
   const HomeRoute({List<PageRouteInfo>? children})
@@ -251,6 +270,52 @@ class NewCompanyRoute extends PageRouteInfo<void> {
       return const NewCompanyView();
     },
   );
+}
+
+/// generated route for
+/// [PartyView]
+class PartyRoute extends PageRouteInfo<PartyRouteArgs> {
+  PartyRoute({
+    Key? key,
+    required String partyId,
+    List<PageRouteInfo>? children,
+  }) : super(
+          PartyRoute.name,
+          args: PartyRouteArgs(
+            key: key,
+            partyId: partyId,
+          ),
+          initialChildren: children,
+        );
+
+  static const String name = 'PartyRoute';
+
+  static PageInfo page = PageInfo(
+    name,
+    builder: (data) {
+      final args = data.argsAs<PartyRouteArgs>();
+      return PartyView(
+        key: args.key,
+        partyId: args.partyId,
+      );
+    },
+  );
+}
+
+class PartyRouteArgs {
+  const PartyRouteArgs({
+    this.key,
+    required this.partyId,
+  });
+
+  final Key? key;
+
+  final String partyId;
+
+  @override
+  String toString() {
+    return 'PartyRouteArgs{key: $key, partyId: $partyId}';
+  }
 }
 
 /// generated route for

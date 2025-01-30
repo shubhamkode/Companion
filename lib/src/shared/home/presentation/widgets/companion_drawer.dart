@@ -11,6 +11,7 @@ class CompanionDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final tabsRouter = AutoRouter.of(context);
     return Drawer(
       child: SafeArea(
         child: VStack(
@@ -32,24 +33,42 @@ class CompanionDrawer extends StatelessWidget {
                   icon: HugeIcons.strokeRoundedContact01,
                   title: "Contacts",
                   isSelected: true,
-                ),
-
-                // DrawerActionButton(
-                //bitcoin transaction icon
-                //   icon: Icons.archive_outlined,
-                //   title: "Manage Debtors",
-                // ),
-                DrawerActionButton(
-                  icon: HugeIcons.strokeRoundedSettings02,
-                  title: "Settings",
+                  // isSelected: tabsRouter.currentUrl == "/agents" ||
+                  //     tabsRouter.currentUrl == '/companies',
                   onTap: () {
-                    context.router.popAndPush(
-                      SettingsRoute(),
-                    );
+                    if (tabsRouter.currentUrl == "/agents" ||
+                        tabsRouter.currentUrl == '/companies') {
+                      context.router.maybePop();
+                      return;
+                    }
+                    // context.router.popUntilRoot();
                   },
                 ),
+                DrawerActionButton(
+                    icon: HugeIcons.strokeRoundedBitcoinTransaction,
+                    title: "Hisab Kitab",
+                    // isSelected: tabsRouter.currentPath == "/hisab-kitab",
+                    onTap: () {
+                      // if (tabsRouter.currentPath == "/hisab-kitab") {
+                      //   context.router.maybePop();
+                      //   return;
+                      // }
+                      context.router.popAndPush(
+                        HisabKitabRoute(),
+                      );
+                    }),
               ],
               spacing: 8.h,
+            ),
+            Spacer(),
+            DrawerActionButton(
+              icon: HugeIcons.strokeRoundedSettings02,
+              title: "Settings",
+              onTap: () {
+                context.router.popAndPush(
+                  SettingsRoute(),
+                );
+              },
             ),
           ],
         ).pSymmetric(h: 8.w, v: 12.h),

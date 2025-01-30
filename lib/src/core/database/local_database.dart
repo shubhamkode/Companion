@@ -10,6 +10,8 @@ part 'local_database.g.dart';
     CompanyTable,
     AgentTable,
     CompanyToAgentTable,
+    PartyTable,
+    TransactionTable,
   ],
 )
 class AppDatabase extends _$AppDatabase {
