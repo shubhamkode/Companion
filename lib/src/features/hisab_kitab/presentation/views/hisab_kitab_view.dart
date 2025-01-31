@@ -106,14 +106,14 @@ class HisabKitabView extends StatelessWidget {
   }
 
   _buildBody() {
-    return SingleChildScrollView(
-      child: VStack(
-        [
-          HisabKitabPartiesView(),
-        ],
-        spacing: 12.h,
-      ).pOnly(bottom: 40.h),
-    );
+    // return SingleChildScrollView(
+    return VStack(
+      [
+        HisabKitabPartiesView(),
+      ],
+      spacing: 12.h,
+    ).pOnly(bottom: 40.h);
+    // );
   }
 }
 
@@ -174,19 +174,29 @@ class _HisabKitabPartiesViewState extends ConsumerState<HisabKitabPartiesView> {
 
   @override
   void initState() {
-    super.initState();
+    // _controller = ScrollController()..addListener(_loadMore);
     _controller.addListener(_loadMore);
+    super.initState();
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_loadMore);
     _controller.dispose();
     super.dispose();
   }
 
-  void _loadMore() {
-    print(true);
-    if (_controller.position.pixels == _controller.position.maxScrollExtent) {
+  void _loadMore() async {
+    int maxPartyCount = await ref
+        .read(databaseProvider)
+        .managers
+        .partyTable
+        .count(distinct: true);
+
+    int currentCount = ref.read(hisabKitabFilterProvider).limit;
+
+    if (_isBottom && (currentCount < maxPartyCount)) {
+      print("Loading More: ${ref.watch(hisabKitabFilterProvider).limit}");
       ref.read(hisabKitabFilterProvider.notifier).update(
             (state) => state.copyWith(
               limit: state.limit + 10,
@@ -217,19 +227,30 @@ class _HisabKitabPartiesViewState extends ConsumerState<HisabKitabPartiesView> {
               .makeCentered()
               .pOnly(top: 200.h);
         }
-        return ListView.builder(
-          shrinkWrap: true,
-          physics: NeverScrollableScrollPhysics(),
+        return CustomScrollView(
           controller: _controller,
-          itemCount: parties.length,
-          itemBuilder: (context, index) {
-            return PartyTile(
-              party: parties[index],
-            );
-          },
-        );
+          anchor: 0.5,
+          shrinkWrap: true,
+          slivers: [
+            SliverList.builder(
+              itemCount: parties.length,
+              itemBuilder: (context, index) {
+                return PartyTile(
+                  party: parties[index],
+                );
+              },
+            ),
+          ],
+        ).expand();
       },
     );
+  }
+
+  bool get _isBottom {
+    if (!_controller.hasClients) return false;
+    final maxScroll = _controller.position.maxScrollExtent;
+    final currentScroll = _controller.offset;
+    return currentScroll >= maxScroll * 0.9;
   }
 
   Widget _buildLoading(BuildContext context) {
